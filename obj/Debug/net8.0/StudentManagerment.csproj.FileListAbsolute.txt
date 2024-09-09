@@ -1,0 +1,14 @@
+/Users/mb/Projects/StudentManagerment/StudentManagerment/bin/Debug/net8.0/StudentManagerment
+/Users/mb/Projects/StudentManagerment/StudentManagerment/bin/Debug/net8.0/StudentManagerment.deps.json
+/Users/mb/Projects/StudentManagerment/StudentManagerment/bin/Debug/net8.0/StudentManagerment.runtimeconfig.json
+/Users/mb/Projects/StudentManagerment/StudentManagerment/bin/Debug/net8.0/StudentManagerment.dll
+/Users/mb/Projects/StudentManagerment/StudentManagerment/bin/Debug/net8.0/StudentManagerment.pdb
+/Users/mb/Projects/StudentManagerment/StudentManagerment/obj/Debug/net8.0/StudentManagerment.GeneratedMSBuildEditorConfig.editorconfig
+/Users/mb/Projects/StudentManagerment/StudentManagerment/obj/Debug/net8.0/StudentManagerment.AssemblyInfoInputs.cache
+/Users/mb/Projects/StudentManagerment/StudentManagerment/obj/Debug/net8.0/StudentManagerment.AssemblyInfo.cs
+/Users/mb/Projects/StudentManagerment/StudentManagerment/obj/Debug/net8.0/StudentManagerment.csproj.CoreCompileInputs.cache
+/Users/mb/Projects/StudentManagerment/StudentManagerment/obj/Debug/net8.0/StudentManagerment.dll
+/Users/mb/Projects/StudentManagerment/StudentManagerment/obj/Debug/net8.0/refint/StudentManagerment.dll
+/Users/mb/Projects/StudentManagerment/StudentManagerment/obj/Debug/net8.0/StudentManagerment.pdb
+/Users/mb/Projects/StudentManagerment/StudentManagerment/obj/Debug/net8.0/StudentManagerment.genruntimeconfig.cache
+/Users/mb/Projects/StudentManagerment/StudentManagerment/obj/Debug/net8.0/ref/StudentManagerment.dll

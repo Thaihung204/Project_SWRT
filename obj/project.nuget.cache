@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "Uv4TkRYUcyhTEmByVYJNQV4TpQpWY3y3gwE4a9/oBYdWsgYxGF1cva9nSTwf+Ey42wizfwWZtKp5JMAcStwtSg==",
+  "success": true,
+  "projectFilePath": "/Users/mb/Projects/StudentManagerment/StudentManagerment/StudentManagerment.csproj",
+  "expectedPackageFiles": [
+    "/Users/mb/.nuget/packages/microsoft.dotnet.ilcompiler/8.0.8/microsoft.dotnet.ilcompiler.8.0.8.nupkg.sha512",
+    "/Users/mb/.nuget/packages/microsoft.net.illink.tasks/8.0.8/microsoft.net.illink.tasks.8.0.8.nupkg.sha512",
+    "/Users/mb/.nuget/packages/runtime.osx-arm64.microsoft.dotnet.ilcompiler/8.0.8/runtime.osx-arm64.microsoft.dotnet.ilcompiler.8.0.8.nupkg.sha512"
+  ],
+  "logs": []
+}
