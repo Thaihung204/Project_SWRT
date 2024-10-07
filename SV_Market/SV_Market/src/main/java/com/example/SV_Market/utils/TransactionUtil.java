@@ -1,10 +1,12 @@
 package com.example.SV_Market.utils;
 
+import lombok.Data;
+
 import java.util.HashMap;
 import java.util.Map;
-
+@Data
 public class TransactionUtil {
-    Map<String,String> responseTransactions = new HashMap<String,String>();
+    Map<String,String> responseTransactions = new HashMap<>();
 
     public TransactionUtil() {
         responseTransactions.put("00","Giao dịch thành công");
@@ -20,13 +22,6 @@ public class TransactionUtil {
         responseTransactions.put("75","Ngân hàng thanh toán đang bảo trì.");
         responseTransactions.put("79","Giao dịch không thành công do: KH nhập sai mật khẩu thanh toán quá số lần quy định. Xin quý khách vui lòng thực hiện lại giao dịch");
         responseTransactions.put("99","Các lỗi khác (lỗi còn lại, không có trong danh sách mã lỗi đã liệt kê)");
-    }
-    public Map<String, String> getResponseTransactions() {
-        return responseTransactions;
-    }
-
-    public void setResponseTransactions(Map<String, String> responseTransactions) {
-        this.responseTransactions = responseTransactions;
     }
 
     public String getType(String key){
