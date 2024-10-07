@@ -21,7 +21,7 @@ public class ReportController {
         return reportService.createReport(request);
     }
 
-    @GetMapping
+    @GetMapping()
     List<Report> viewHistoryReport() {
         return reportService.viewHistoryReport();
     }
