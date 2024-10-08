@@ -16,6 +16,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -82,21 +83,27 @@ public class VNPayService {
         return paymentUrl;
     }
 
-    public BalanceFluctuation transaction(TransactionRequest request){
-        double balance = getUser(request.getUserId()).getBalance();
+    public User transaction(TransactionRequest request){
+        User user = getUser(request.getUserId());
+        double balance = user.getBalance();
         TransactionUtil transactionUtil = new TransactionUtil();
-        if (transactionUtil.getType(request.getVnp_ResponseCode()).equals(00)){
-            balance += request.getVnp_Amount();
+//        String state =
+        if (request.getVnp_ResponseCode().equals("00")){
+            balance += request.getVnp_Amount()/100;
         }
+        request.setDate();
+        user.setBalance(balance);
         BalanceFluctuation balanceFluctuation = BalanceFluctuation.builder()
+                .user(user)
                 .transactionType("+")
                 .amount(request.getVnp_Amount())
                 .balance(balance)
                 .content(request.getVnp_OrderInfo())
-                .date(request.getVnp_PayDate())
+                .date(request.getDate())
                 .state(transactionUtil.getType(request.getVnp_ResponseCode()))
                 .build();
-        return paymentRepository.save(balanceFluctuation);
+        paymentRepository.save(balanceFluctuation);
+        return userRepository.save(user);
     }
     public User getUser(String id){
         return userRepository.findById(id)
