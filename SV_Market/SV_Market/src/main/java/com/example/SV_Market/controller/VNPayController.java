@@ -12,17 +12,18 @@ import org.springframework.web.bind.annotation.*;
 import java.io.UnsupportedEncodingException;
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/payment")
 public class VNPayController {
     @Autowired
     private VNPayService vnPayService;
 
-    @PostMapping
+    @PostMapping("/pay")
     public ResponseEntity<?> createPayment(@RequestBody PaymentRequest paymentRequest) throws UnsupportedEncodingException {
         return ResponseEntity.status(HttpStatus.OK).body(vnPayService.pay(paymentRequest));
     }
 
-    @GetMapping
+    @PostMapping("/call_back")
     public ResponseEntity<?> completeTransaction(@RequestBody TransactionRequest request) throws UnsupportedEncodingException {
         return ResponseEntity.status(HttpStatus.OK).body(vnPayService.transaction(request));
     }
