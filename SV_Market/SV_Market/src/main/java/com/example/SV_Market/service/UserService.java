@@ -2,13 +2,20 @@ package com.example.SV_Market.service;
 
 import com.example.SV_Market.dto.UserDto;
 import com.example.SV_Market.dto.UserUpdateRequest;
+import com.example.SV_Market.entity.SubscriptionPackage;
+import com.example.SV_Market.entity.Upgrade;
 import com.example.SV_Market.entity.User;
 
+import com.example.SV_Market.repository.SubscriptionPackageRepository;
+import com.example.SV_Market.repository.UpgradeRepository;
 import com.example.SV_Market.repository.UserRepository;
+import com.example.SV_Market.request.UpgradeRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -19,7 +26,10 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private CloudinaryService cloudinaryService;
-    // Other methods...
+    @Autowired
+    private UpgradeRepository upgradeRepository;
+    @Autowired
+    private SubscriptionPackageRepository packageRepository;
 
     public User createUser(UserDto request) {
         User user = new User();
@@ -106,5 +116,34 @@ public User getUserById(String userId) {
 
     public User getUserByEmailPass(String email, String password){
         return userRepository.login(email,password).orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    public SubscriptionPackage getPackage(Long id){
+        return packageRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Package not found"));
+    }
+    @Transactional
+    public User upgradeUserRole(UpgradeRequest request) {
+
+        User user = getUserById(request.getUserId());
+        SubscriptionPackage subscriptionPackage = getPackage(request.getPackageId());
+
+        if (user.getBalance() >= subscriptionPackage.getPrice()) {
+            user.setBalance(user.getBalance() - subscriptionPackage.getPrice());
+            user.setRole(subscriptionPackage.getRoleName());
+            Upgrade upgrade = new Upgrade();
+            upgrade.setUser(user);
+            upgrade.setType(subscriptionPackage.getPackageName());
+            upgrade.setStartDate(LocalDate.now());
+            upgrade.setEndDate(LocalDate.now().plusMonths(1));
+
+            upgradeRepository.save(upgrade);
+
+
+            return userRepository.save(user);
+        } else {
+            return userRepository.save(user);
+        }
+
     }
 }
