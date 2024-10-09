@@ -96,7 +96,7 @@ public class VNPayService {
         BalanceFluctuation balanceFluctuation = BalanceFluctuation.builder()
                 .user(user)
                 .transactionType("+")
-                .amount(request.getVnp_Amount())
+                .amount(request.getVnp_Amount()/100)
                 .balance(balance)
                 .content(request.getVnp_OrderInfo())
                 .date(request.getDate())

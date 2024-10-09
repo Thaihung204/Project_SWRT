@@ -33,7 +33,7 @@ public class ProductService {
 
         List<ProductImage> productImages = new ArrayList<>();  // Create an empty list to store the ProductImage objects
 
-        for (String imagePath : cloudinaryService.uploadProductImage(request.getImages())) {  // Iterate over each image path from the request
+            for (String imagePath : cloudinaryService.uploadProductImage(request.getImages())) {  // Iterate over each image path from the request
             ProductImage productImage = new ProductImage();  // Create a new ProductImage object
             productImage.setPath(imagePath);  // Set the image path
             productImage.setProduct(product);  // Associate the image with the product
@@ -50,13 +50,18 @@ public class ProductService {
         product.setCategory(categoryService.getCategory(request.getCategoryId()));
         product.setState(request.getState());
         product.setCreate_at(currentDate);
-        product.setStatus(request.getStatus());
+        product.setType(request.getType());
+        product.setStatus("pending");
         return productRepository.save(product);
     }
 
     public Product getProductById(String id) {
         return productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+    }
+
+    public List <Product> getPublicProduct(String status) {
+        return productRepository.findByStatus(status);
     }
 
     public List<Product> getAllProducts(){

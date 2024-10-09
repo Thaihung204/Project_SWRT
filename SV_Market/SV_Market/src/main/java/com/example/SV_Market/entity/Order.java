@@ -37,7 +37,7 @@ public class Order {
     private User buyer;
 
     @Column(name = "state", nullable = false)
-    private LocalDate state;
+    private String state;
 
     @Column(name = "create_at", nullable = false)
     private LocalDate createAt;

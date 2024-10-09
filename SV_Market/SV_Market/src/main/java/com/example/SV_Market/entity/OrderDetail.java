@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderDetail {
+public class    OrderDetail {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
