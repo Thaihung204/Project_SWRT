@@ -3,9 +3,11 @@ package com.example.SV_Market.service;
 import com.example.SV_Market.entity.Category;
 import com.example.SV_Market.entity.Product;
 import com.example.SV_Market.entity.ProductImage;
+import com.example.SV_Market.entity.User;
 import com.example.SV_Market.repository.ProductRepository;
 import com.example.SV_Market.request.ProductCreationRequest;
 import com.example.SV_Market.request.ProductUpdateRequest;
+import com.example.SV_Market.response.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -63,6 +65,68 @@ public class ProductService {
     public List<Product> getAllProducts(){
         return productRepository.findAll();
     }
+
+    public List<ProductResponse> getProducts() {
+        List<Product> products = productRepository.findAll();
+
+        // Sử dụng Stream API để chuyển đổi danh sách
+        return products.stream().map(product -> {
+            ProductResponse response = new ProductResponse();
+            response.setProductId(product.getProductId());
+            response.setProductName(product.getProductName());
+
+            User user = product.getUser();
+            UserResponse userResponse = new UserResponse();
+            userResponse.setUserName(user.getUserName());
+            userResponse.setAddress(user.getAddress());
+            userResponse.setProfilePicture(user.getProfilePicture());
+
+            response.setUser(userResponse);
+
+            List<ProductImageResponse> imageResponses = product.getImages().stream().map(image -> {
+                ProductImageResponse imageResponse = new ProductImageResponse();
+                imageResponse.setPath(image.getPath());
+                return imageResponse;
+            }).collect(Collectors.toList());
+
+            response.setImages(imageResponses);
+            response.setQuantity(product.getQuantity());
+            response.setPrice(product.getPrice());
+            response.setDescription(product.getDescription());
+
+            Category category = product.getCategory();
+            CategoryResponse categoryResponse = new CategoryResponse();
+            categoryResponse.setTitle(category.getTitle());
+            categoryResponse.setDescription(category.getDescription());
+            categoryResponse.setImage(category.getImage());
+
+            response.setCategory(categoryResponse);
+            response.setType(product.getType());
+            response.setState(product.getState());
+            response.setCreate_at(product.getCreate_at());
+
+            List<FeedbackResponse> feedbackResponses = product.getFeedBacks().stream().map(feedback -> {
+                FeedbackResponse feedbackResponse = new FeedbackResponse();
+
+                User fuser = feedback.getSender();
+                UserResponse fuserResponse = new UserResponse();
+                fuserResponse.setUserName(fuser.getUserName());
+                fuserResponse.setProfilePicture(fuser.getProfilePicture());
+                feedbackResponse.setSender(fuserResponse);
+                feedbackResponse.setRating(feedback.getRating());
+                feedbackResponse.setDescription(feedback.getDescription());
+                feedbackResponse.setCreatedAt(feedback.getCreatedAt());
+                return feedbackResponse;
+            }).collect(Collectors.toList());
+            response.setFeedBacks(feedbackResponses);
+
+            return response;
+        }).collect(Collectors.toList());
+    }
+    public List<Product> getPublicProductsByUserId(String userId) {
+        return productRepository.findPublicProductsByUserId(userId);
+    }
+
 
     public Product updateProduct(String productId, ProductUpdateRequest request){
         Product product = getProductById(productId);

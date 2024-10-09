@@ -1,11 +1,9 @@
     package com.example.SV_Market.entity;
 
+    import aj.org.objectweb.asm.commons.Remapper;
     import com.fasterxml.jackson.annotation.JsonIgnore;
     import jakarta.persistence.*;
-    import lombok.AllArgsConstructor;
-    import lombok.Getter;
-    import lombok.NoArgsConstructor;
-    import lombok.Setter;
+    import lombok.*;
     import org.springframework.data.domain.Auditable;
 
     import java.util.Date;
@@ -16,6 +14,7 @@
     @Table(name = "User")
     @Getter
     @Setter
+    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public class User    {
@@ -59,6 +58,8 @@
         @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
         @JsonIgnore
         private List<Product> products;
+
+
 
 //        private boolean accountVerified;
 //        private boolean loginDisabled;

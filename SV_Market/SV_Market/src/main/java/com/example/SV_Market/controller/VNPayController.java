@@ -37,9 +37,6 @@ public class VNPayController {
     public ResponseEntity<?> getTransaction(@PathVariable String userId) {
         return ResponseEntity.status(HttpStatus.OK).body(vnPayService.getBalanceFluctuationList(userId));
     }
-//    @PutMapping
-//    public String[] updateUser(@ModelAttribute TestRequest request) throws IOException {
-//        return cloudinaryService.uploadProductImage(request.getImages());
-//    }
+
 
 }
