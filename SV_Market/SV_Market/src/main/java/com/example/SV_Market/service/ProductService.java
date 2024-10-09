@@ -6,12 +6,14 @@ import com.example.SV_Market.entity.ProductImage;
 import com.example.SV_Market.repository.ProductRepository;
 import com.example.SV_Market.request.ProductCreationRequest;
 import com.example.SV_Market.request.ProductUpdateRequest;
+import com.example.SV_Market.request.SensorProductRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -50,7 +52,7 @@ public class ProductService {
         product.setCategory(categoryService.getCategory(request.getCategoryId()));
         product.setState(request.getState());
         product.setCreate_at(currentDate);
-        product.setStatus("doiduyet"); // tu set
+        product.setStatus("pending"); // tu set
         product.setType(request.getType());
         return productRepository.save(product);
     }
@@ -78,6 +80,20 @@ public class ProductService {
         product.setStatus(request.getStatus());
         product.setCreate_at(currentDate);
 
+        return productRepository.save(product);
+    }
+
+    public List<Product> sensorProduct(){
+        Optional<Product> list = productRepository.sensor();
+        if(list.isPresent()){
+            return list.stream().toList();
+        }
+        return null;
+    }
+
+    public Product acceptProduct(SensorProductRequest request) {
+        Product product = getProductById(request.getProductId());
+        product.getStatus();
         return productRepository.save(product);
     }
 
