@@ -28,12 +28,9 @@ public class OrderDetail {
     @JoinColumn(name = "product_id", nullable = false, referencedColumnName = "product_id")
     private Product product;
 
-    @Column(name = "type", length = 50, nullable = false)
-    private String type;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trade_product_id", nullable = false, referencedColumnName = "product_id")
+    private Product tradeProduct;
 
-    @Column(name = "start_date", nullable = false)
-    private LocalDate startDate;
 
-    @Column(name = "end_date")
-    private LocalDate endDate;
 }
