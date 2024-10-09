@@ -33,6 +33,8 @@ public class Product {
 
     private int quantity;
     private long price;
+
+    @Column(columnDefinition = "LONGTEXT")
     private String description;
 
     @ManyToOne

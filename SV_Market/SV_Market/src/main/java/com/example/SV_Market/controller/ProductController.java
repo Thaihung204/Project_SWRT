@@ -23,7 +23,9 @@ public class ProductController {
     private CloudinaryService cloudinaryService;
 
     @PostMapping()
+
     Product createProduct(@ModelAttribute  ProductCreationRequest request){
+
         return productService.createProduct(request);
     }
 

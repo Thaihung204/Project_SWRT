@@ -52,6 +52,7 @@ public class ProductService {
         product.setCreate_at(currentDate);
         product.setType(request.getType());
         product.setStatus("pending");
+
         return productRepository.save(product);
     }
 

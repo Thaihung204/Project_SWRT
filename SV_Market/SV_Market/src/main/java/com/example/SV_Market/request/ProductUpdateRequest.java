@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @AllArgsConstructor
@@ -11,12 +12,15 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ProductUpdateRequest {
 
-    private String productName;
-    private int quantity;
-    private long price;
-    private String description;
-    private String type;
-    private String state;
+    protected String productName;
+    protected MultipartFile[] images;
+    //    protected List<String> images;
+    protected int quantity;
+    protected long price;
+    protected String description;
+    protected String categoryId;
+    protected String type;
+    protected String state;
     private String status;
 
 }
