@@ -34,7 +34,7 @@ public class ReportService {
         report.setTitle(request.getTitle());
         report.setDescription(request.getDescription());
         report.setType(request.getType());
-        report.setResponseMessage(request.getResponseMessage());
+        report.setResponseMessage(" ");
         return reportRepository.save(report);
     }
 

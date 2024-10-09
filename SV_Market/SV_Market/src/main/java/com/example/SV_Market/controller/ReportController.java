@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/reports")
 public class ReportController {
     @Autowired
@@ -25,10 +26,12 @@ public class ReportController {
 
 
 
+
     @GetMapping("/history")
     public ResponseEntity<List<ReportResponse>> viewHistoryReport(String userId) {
         List<ReportResponse> reportHistory = reportService.viewHistoryReport(userId);
         return ResponseEntity.ok(reportHistory); // Trả về danh sách các report cùng với productName
+
     }
 
 
