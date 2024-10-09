@@ -13,8 +13,8 @@ import java.util.Optional;
 public interface ProductRepository extends JpaRepository<Product, String> {
     Optional<Product> findById(String productId);
 
-    @Query("SELECT u FROM Product u WHERE u.status = 'pending'")
-    Optional<Product> sensor();
+    @Query("SELECT u FROM Product u WHERE u.status = :status")
+    Optional<Product> sensor(String status);
     List<Product> findByStatus(String tatus);
 
 
