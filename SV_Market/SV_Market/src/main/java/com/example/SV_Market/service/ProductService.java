@@ -50,7 +50,8 @@ public class ProductService {
         product.setCategory(categoryService.getCategory(request.getCategoryId()));
         product.setState(request.getState());
         product.setCreate_at(currentDate);
-        product.setStatus(request.getStatus());
+        product.setStatus("doiduyet"); // tu set
+        product.setType(request.getType());
         return productRepository.save(product);
     }
 

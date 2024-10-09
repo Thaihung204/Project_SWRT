@@ -96,7 +96,7 @@ public class VNPayService {
         BalanceFluctuation balanceFluctuation = BalanceFluctuation.builder()
                 .user(user)
                 .transactionType("+")
-                .amount(request.getVnp_Amount())
+                .amount(request.getVnp_Amount()/100)
                 .balance(balance)
                 .content(request.getVnp_OrderInfo())
                 .date(request.getDate())
@@ -108,5 +108,12 @@ public class VNPayService {
     public User getUser(String id){
         return userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+    public List<BalanceFluctuation> getBalanceFluctuationList(String userId){
+         Optional<BalanceFluctuation> list = paymentRepository.findByUserId(userId);
+         if (list.isPresent()){
+            return list.stream().toList();
+         }
+         return null;
     }
 }

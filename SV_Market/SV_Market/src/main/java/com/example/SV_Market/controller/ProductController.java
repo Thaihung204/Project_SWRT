@@ -22,10 +22,10 @@ public class ProductController {
     @Autowired
     private CloudinaryService cloudinaryService;
 
-//    @PostMapping()
-//    Product createProduct(@RequestBody ProductCreationRequest request){
-//        return productService.createProduct(request);
-//    }
+    @PostMapping()
+    Product createProduct(@RequestBody ProductCreationRequest request){
+        return productService.createProduct(request);
+    }
 
     @GetMapping()
     List<Product> getProducts(){
