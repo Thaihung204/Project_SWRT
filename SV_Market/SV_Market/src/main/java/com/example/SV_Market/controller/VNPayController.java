@@ -32,6 +32,11 @@ public class VNPayController {
     public ResponseEntity<?> completeTransaction(@RequestBody TransactionRequest request) throws UnsupportedEncodingException {
         return ResponseEntity.status(HttpStatus.OK).body(vnPayService.transaction(request));
     }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<?> getTransaction(@PathVariable String userId) {
+        return ResponseEntity.status(HttpStatus.OK).body(vnPayService.getBalanceFluctuationList(userId));
+    }
 //    @PutMapping
 //    public String[] updateUser(@ModelAttribute TestRequest request) throws IOException {
 //        return cloudinaryService.uploadProductImage(request.getImages());

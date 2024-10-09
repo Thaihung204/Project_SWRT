@@ -33,11 +33,13 @@ public class Product {
 
     private int quantity;
     private long price;
+
+    @Column(columnDefinition = "LONGTEXT")
     private String description;
 
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false, referencedColumnName = "category_id")
-    @JsonIgnore
+//    @JsonIgnore
     private Category category;
 
     private String type; // sell/exchange/se
