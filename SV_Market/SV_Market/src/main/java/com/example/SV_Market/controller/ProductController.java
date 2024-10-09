@@ -24,14 +24,25 @@ public class ProductController {
     private CloudinaryService cloudinaryService;
 
     @PostMapping()
-    Product createProduct(@RequestBody ProductCreationRequest request){
+
+    Product createProduct(@ModelAttribute  ProductCreationRequest request){
+
         return productService.createProduct(request);
     }
 
+
     // Get all products
-    @GetMapping
-    public List<ProductResponse> getProducts() {
-        return productService.getProducts();
+//    @GetMapping
+//    public List<ProductResponse> getProducts() {
+//        return productService.getProducts();
+
+//    @GetMapping()
+//    List<Product> getProducts(){
+//        return productService.getAllProducts();
+//    }
+    @GetMapping()
+    List<Product> getPublicProduct(){
+        return productService.getPublicProduct("public");
     }
 
     // Get a product by ID
