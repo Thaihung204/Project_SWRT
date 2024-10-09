@@ -89,7 +89,7 @@ public class ProductService {
     }
 
     public List<Product> sensorProduct(){
-        Optional<Product> list = productRepository.sensor();
+        Optional<Product> list = productRepository.sensor("pending");
         if(list.isPresent()){
             return list.stream().toList();
         }
