@@ -43,8 +43,8 @@ public class ProductController {
         return productService.updateProduct(productId, request);
     }
 
-    @PostMapping
-    public String[] createProduct2(@ModelAttribute ProductCreationRequest request) throws IOException {
-        return cloudinaryService.uploadProductImage(request.getImages());
-    }
+//    @PostMapping
+//    public String[] createProduct2(@ModelAttribute ProductCreationRequest request) throws IOException {
+//        return cloudinaryService.uploadProductImage(request.getImages());
+//    }
 }
