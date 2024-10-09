@@ -36,8 +36,11 @@ public class Order {
     @JoinColumn(name = "buy_id", nullable = false, referencedColumnName = "userid")
     private User buyer;
 
+    @Column(name = "payment_by", nullable = false)
+    private String paymentBy;
+
     @Column(name = "state", nullable = false)
-    private LocalDate state;
+    private String state;
 
     @Column(name = "create_at", nullable = false)
     private LocalDate createAt;

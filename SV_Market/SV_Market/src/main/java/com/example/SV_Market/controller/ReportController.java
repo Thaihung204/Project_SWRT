@@ -3,8 +3,10 @@ package com.example.SV_Market.controller;
 
 import com.example.SV_Market.entity.Report;
 import com.example.SV_Market.request.ReportCreationRequest;
+import com.example.SV_Market.request.ReportResponse;
 import com.example.SV_Market.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,9 +23,18 @@ public class ReportController {
         return reportService.createReport(request);
     }
 
-    @GetMapping()
-    List<Report> viewHistoryReport() {
-        return reportService.viewHistoryReport();
+
+
+
+
+    @GetMapping("/history")
+    public ResponseEntity<List<ReportResponse>> viewHistoryReport(String userId) {
+        List<ReportResponse> reportHistory = reportService.viewHistoryReport(userId);
+        return ResponseEntity.ok(reportHistory); // Trả về danh sách các report cùng với productName
+
     }
 
+
+
 }
+

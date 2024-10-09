@@ -23,13 +23,19 @@ public class ProductController {
     private CloudinaryService cloudinaryService;
 
     @PostMapping()
-    Product createProduct(@RequestBody ProductCreationRequest request){
+
+    Product createProduct(@ModelAttribute  ProductCreationRequest request){
+
         return productService.createProduct(request);
     }
 
+//    @GetMapping()
+//    List<Product> getProducts(){
+//        return productService.getAllProducts();
+//    }
     @GetMapping()
-    List<Product> getProducts(){
-        return productService.getAllProducts();
+    List<Product> getPublicProduct(){
+        return productService.getPublicProduct("public");
     }
 
 
@@ -43,8 +49,8 @@ public class ProductController {
         return productService.updateProduct(productId, request);
     }
 
-    @PostMapping
-    public String[] createProduct2(@ModelAttribute ProductCreationRequest request) throws IOException {
-        return cloudinaryService.uploadProductImage(request.getImages());
-    }
+//    @PostMapping
+//    public String[] createProduct2(@ModelAttribute ProductCreationRequest request) throws IOException {
+//        return cloudinaryService.uploadProductImage(request.getImages());
+//    }
 }
