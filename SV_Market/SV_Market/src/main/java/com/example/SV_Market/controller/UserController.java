@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
-@RequestMapping("")
+@RequestMapping("/users")
 public class UserController {
 
     @Autowired
@@ -61,6 +61,14 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
+    }
+
+    @PostMapping("/upgrade/{userId}/{packageId}")
+    public ResponseEntity<String> upgradeUserRole(
+            @PathVariable String userId,
+            @PathVariable Long packageId) {
+        String result = userService.upgradeUserRole(userId, packageId);
+        return ResponseEntity.ok(result);
     }
 
 }

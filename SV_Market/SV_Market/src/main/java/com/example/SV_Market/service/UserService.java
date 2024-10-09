@@ -3,20 +3,32 @@ package com.example.SV_Market.service;
 import com.example.SV_Market.dto.UserDto;
 import com.example.SV_Market.dto.UserUpdateRequest;
 import com.example.SV_Market.entity.User;
+import com.example.SV_Market.entity.Upgrade;
 
+import com.example.SV_Market.entity.SubscriptionPackage;
 import com.example.SV_Market.repository.UserRepository;
+import com.example.SV_Market.repository.UpgradeRepository;
+import com.example.SV_Market.repository.SubscriptionPackageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
 @Service
 public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private UpgradeRepository upgradeRepository;
+
+    @Autowired
+    private SubscriptionPackageRepository packageRepository;
     @Autowired
     private CloudinaryService cloudinaryService;
     // Other methods...
@@ -42,17 +54,17 @@ public class UserService {
         return userRepository.findAll();
     }
 
-//    public Optional<User> getUserById(String userId) {
+    //    public Optional<User> getUserById(String userId) {
 //        return userRepository.findById(userId);
 //    }
 //    public User getUserById(String userId) {
 //        return userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User Not Found!"));
 //
 //    }
-public User getUserById(String userId) {
-    return userRepository.findById(userId)
-            .orElseThrow(() -> new RuntimeException("User with ID " + userId + " not found!"));
-}
+    public User getUserById(String userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User with ID " + userId + " not found!"));
+    }
 
 
     public User saveUser(User user) {
@@ -64,7 +76,7 @@ public User getUserById(String userId) {
     }
 
     // New method to change the password of a user
-    public String updatePassword(String email,String currentPassword, String newPassword) throws Exception {
+    public String updatePassword(String email, String currentPassword, String newPassword) throws Exception {
         if (email == null || email.isEmpty()) {
             throw new IllegalArgumentException("The given email must not be null");
         }
@@ -88,7 +100,7 @@ public User getUserById(String userId) {
     }
 
 
-    public User getUser(String email){
+    public User getUser(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
@@ -104,7 +116,39 @@ public User getUserById(String userId) {
         return user;
     }
 
-    public User getUserByEmailPass(String email, String password){
-        return userRepository.login(email,password).orElseThrow(() -> new RuntimeException("User not found"));
+    public User getUserByEmailPass(String email, String password) {
+        return userRepository.login(email, password).orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+
+    @Transactional
+    public String upgradeUserRole(String userId, Long packageId) {
+        Optional<User> userOpt = userRepository.findById(userId);
+        Optional<SubscriptionPackage> packageOpt =packageRepository.findById(packageId);
+
+        if (userOpt.isPresent() && packageOpt.isPresent()) {
+            User user = userOpt.get();
+            SubscriptionPackage subscriptionPackage = packageOpt.get();
+
+            if (user.getBalance() >= subscriptionPackage.getPrice()) {
+                user.setBalance(user.getBalance() - subscriptionPackage.getPrice());
+                user.setRole(subscriptionPackage.getRoleName());
+
+                Upgrade upgrade = new Upgrade();
+                upgrade.setUserId(userId);
+                upgrade.setType(subscriptionPackage.getPackageName());
+                upgrade.setStartDate(LocalDate.now());
+                upgrade.setEndDate(LocalDate.now().plusMonths(1));
+
+                upgradeRepository.save(upgrade);
+                userRepository.save(user);
+
+                return "Nâng cấp thành công!";
+            } else {
+                return "Không đủ tiền trong tài khoản.";
+            }
+        } else {
+            return "Không tìm thấy người dùng hoặc gói nâng cấp.";
+        }
     }
 }
