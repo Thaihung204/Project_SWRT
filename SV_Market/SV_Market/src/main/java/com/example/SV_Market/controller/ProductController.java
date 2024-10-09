@@ -23,13 +23,19 @@ public class ProductController {
     private CloudinaryService cloudinaryService;
 
     @PostMapping()
-    Product createProduct(@RequestBody ProductCreationRequest request){
+
+    Product createProduct(@ModelAttribute  ProductCreationRequest request){
+
         return productService.createProduct(request);
     }
 
+//    @GetMapping()
+//    List<Product> getProducts(){
+//        return productService.getAllProducts();
+//    }
     @GetMapping()
-    List<Product> getProducts(){
-        return productService.getAllProducts();
+    List<Product> getPublicProduct(){
+        return productService.getPublicProduct("public");
     }
 
 
