@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderDetail {
+public class    OrderDetail {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
