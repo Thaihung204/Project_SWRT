@@ -10,4 +10,5 @@ import java.util.Optional;
 @Repository
 public interface ReportRepository  extends JpaRepository<Report, String> {
     List<Report> findByUser_UserId(String userId);
+    List<Report> findByType(String type);
 }

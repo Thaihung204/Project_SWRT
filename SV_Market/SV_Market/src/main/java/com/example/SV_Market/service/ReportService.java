@@ -29,12 +29,12 @@ public class ReportService {
     public Report createReport(@RequestBody ReportCreationRequest request) {
         Report report = new Report();
 
+        report.setDescription(request.getDescription());
+        report.setResponseMessage(" ");
+        report.setTitle(request.getTitle());
+        report.setType(request.getType());
         report.setUser(userService.getUserById(request.getUserId()));
         report.setProduct(productService.getProductById(request.getProductId()));
-        report.setTitle(request.getTitle());
-        report.setDescription(request.getDescription());
-        report.setType(request.getType());
-        report.setResponseMessage(" ");
         return reportRepository.save(report);
     }
 
@@ -54,6 +54,11 @@ public class ReportService {
             response.setProductName(report.getProduct().getProductName());  // Lấy tên sản phẩm từ product
             return response;
         }).collect(Collectors.toList());
+    }
+
+
+    public List<Report> viewReports() {
+        return reportRepository.findByType("Chưa giải quyết");
     }
 }
 

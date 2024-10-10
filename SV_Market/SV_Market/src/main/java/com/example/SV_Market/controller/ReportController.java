@@ -34,6 +34,12 @@ public class ReportController {
 
     }
 
+    @GetMapping("/viewreports")
+    public ResponseEntity<List<Report>> viewReports() {
+        List<Report> viewReports = reportService.viewReports();
+        return ResponseEntity.ok(viewReports);
+    }
+
 
 
 }
