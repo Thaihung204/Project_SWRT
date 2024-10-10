@@ -26,7 +26,6 @@ public class ProductController {
     @PostMapping()
 
     Product createProduct(@ModelAttribute  ProductCreationRequest request){
-
         return productService.createProduct(request);
     }
 
@@ -52,10 +51,12 @@ public class ProductController {
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
-    // Get public products by user ID (renamed endpoint to avoid conflict)
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Product>> getPublicProductsByUserId(@PathVariable String userId) {
-        List<Product> products = productService.getPublicProductsByUserId(userId);
+    // Get public products by user ID
+    @GetMapping("/shop")
+    public ResponseEntity<List<ProductResponse>> getProductsByUserIdAndStatus(
+            @RequestParam(value = "userId", required = false) String userId,
+            @RequestParam(value = "status", required = false) String status) {
+        List<ProductResponse> products = productService.getPublicProductsByUserId(userId,status);
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
 

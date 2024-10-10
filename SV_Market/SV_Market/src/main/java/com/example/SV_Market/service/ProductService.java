@@ -74,9 +74,46 @@ public class ProductService {
     }
 
     public List<ProductResponse> getProducts() {
-        List<Product> products = productRepository.findAll();
+        return formatProductresponse(productRepository.findAll());
 
-        // Sử dụng Stream API để chuyển đổi danh sách
+    }
+    public List<ProductResponse> getPublicProductsByUserId(String userId, String status) {
+        return formatProductresponse(productRepository.findProductsByUserIdAndStatus(userId, status));
+    }
+
+
+    public Product updateProduct(String productId, ProductUpdateRequest request){
+        Product product = getProductById(productId);
+
+        LocalDate currentDate = LocalDate.now();
+
+        product.setProductName(request.getProductName());
+        product.setQuantity(request.getQuantity());
+        product.setPrice(request.getPrice());
+        product.setDescription(request.getDescription());
+        product.setType((request.getType()));
+        product.setState(request.getState());
+        product.setStatus(request.getStatus());
+        product.setCreate_at(currentDate);
+
+        return productRepository.save(product);
+    }
+
+    public List<Product> sensorProduct(){
+        Optional<Product> list = productRepository.sensor("pending");
+        if(list.isPresent()){
+            return list.stream().toList();
+        }
+        return null;
+    }
+
+    public Product acceptProduct(SensorProductRequest request) {
+        Product product = getProductById(request.getProductId());
+        product.getStatus();
+        return productRepository.save(product);
+    }
+
+    public List<ProductResponse> formatProductresponse(List<Product> products){
         return products.stream().map(product -> {
             ProductResponse response = new ProductResponse();
             response.setProductId(product.getProductId());
@@ -130,42 +167,5 @@ public class ProductService {
             return response;
         }).collect(Collectors.toList());
     }
-    public List<Product> getPublicProductsByUserId(String userId) {
-        return productRepository.findPublicProductsByUserId(userId);
-    }
-
-
-    public Product updateProduct(String productId, ProductUpdateRequest request){
-        Product product = getProductById(productId);
-
-        LocalDate currentDate = LocalDate.now();
-
-        product.setProductName(request.getProductName());
-        product.setQuantity(request.getQuantity());
-        product.setPrice(request.getPrice());
-        product.setDescription(request.getDescription());
-        product.setType((request.getType()));
-        product.setState(request.getState());
-        product.setStatus(request.getStatus());
-        product.setCreate_at(currentDate);
-
-        return productRepository.save(product);
-    }
-
-    public List<Product> sensorProduct(){
-        Optional<Product> list = productRepository.sensor("pending");
-        if(list.isPresent()){
-            return list.stream().toList();
-        }
-        return null;
-    }
-
-    public Product acceptProduct(SensorProductRequest request) {
-        Product product = getProductById(request.getProductId());
-        product.getStatus();
-        return productRepository.save(product);
-    }
-
-
 
 }

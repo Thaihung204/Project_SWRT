@@ -16,12 +16,15 @@ import java.util.Optional;
 public interface ProductRepository extends JpaRepository<Product, String> {
     Optional<Product> findById(String productId);
 
-    @Query(value = "SELECT * FROM product WHERE userid = :userId AND status = 'public'", nativeQuery = true)
-    List<Product> findPublicProductsByUserId(@Param("userId") String userId);
+    @Query(value = "SELECT * FROM product WHERE userid = :userId AND status = :status", nativeQuery = true)
+    List<Product> findProductsByUserIdAndStatus(@Param("userId") String userId, @Param("status") String status);
 
 
+    //for admin to get product to kiem duyet
     @Query("SELECT u FROM Product u WHERE u.status = :status")
     Optional<Product> sensor(String status);
+
+    //de hien thi tren trang home
     List<Product> findByStatus(String tatus);
 
 
