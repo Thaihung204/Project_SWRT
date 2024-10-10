@@ -57,8 +57,26 @@ public class ReportService {
     }
 
 
-    public List<Report> viewReports() {
-        return reportRepository.findByType("Chưa giải quyết");
+    public List<ReportResponse> viewReports() {
+        List<Report> reports = reportRepository.findByType("Chưa giải quyết");
+
+        return reports.stream().map(report -> {
+            ReportResponse response = new ReportResponse();
+            response.setReportId(report.getReportId());
+            response.setTitle(report.getTitle());
+            response.setDescription(report.getDescription());
+            response.setType(report.getType());
+            response.setResponseMessage(report.getResponseMessage());
+            response.setUser(report.getUser());
+            response.setProductName(report.getProduct().getProductName());  // Lấy tên sản phẩm từ product
+            return response;
+        }).collect(Collectors.toList());
     }
+
+
+
+
 }
+
+
 

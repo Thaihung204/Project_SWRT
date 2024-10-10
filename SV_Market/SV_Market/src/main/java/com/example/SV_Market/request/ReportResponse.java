@@ -1,5 +1,6 @@
 package com.example.SV_Market.request;
 
+import com.example.SV_Market.entity.Product;
 import com.example.SV_Market.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

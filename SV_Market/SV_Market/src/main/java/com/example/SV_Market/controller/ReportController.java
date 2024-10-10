@@ -20,6 +20,7 @@ public class ReportController {
 
     @PostMapping()
     Report createReport(@RequestBody ReportCreationRequest request) {
+
         return reportService.createReport(request);
     }
 
@@ -34,12 +35,12 @@ public class ReportController {
 
     }
 
-    @GetMapping("/viewreports")
-    public ResponseEntity<List<Report>> viewReports() {
-        List<Report> viewReports = reportService.viewReports();
-        return ResponseEntity.ok(viewReports);
-    }
 
+    @GetMapping("/viewreports")
+    public ResponseEntity<List<ReportResponse>> viewReports() {
+        List<ReportResponse> viewreports = reportService.viewReports();
+        return ResponseEntity.ok(viewreports);
+    }
 
 
 }
