@@ -111,7 +111,7 @@ public class ProductService {
 
     public Product acceptProduct(SensorProductRequest request) {
         Product product = getProductById(request.getProductId());
-        product.getStatus();
+        product.setStatus(request.getStatus());
         return productRepository.save(product);
     }
 

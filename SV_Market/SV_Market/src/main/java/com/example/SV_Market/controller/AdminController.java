@@ -20,16 +20,9 @@ import java.util.List;
 @RestController
 
 @CrossOrigin("*")
-//@RequestMapping("/reportadmins")
-//public class AdminController {
-//
-//    private ReportService reportService;
-//
-//    @GetMapping()
-//    public ResponseEntity<List<ReportResponse>> Getviewreports() {
-//        List<ReportResponse> viewreports = reportService.viewReports();
-//        return ResponseEntity.ok(viewreports);
-//    }
+
+   
+
 
 @RequestMapping("/admin")
 public class AdminController {
@@ -44,5 +37,11 @@ public class AdminController {
         return ResponseEntity.status(HttpStatus.OK).body(productService.acceptProduct(request));
     }
 
+     private ReportService reportService;
 
+//   @GetMapping()
+//   public ResponseEntity<List<ReportResponse>> Getviewreports() {
+//       List<ReportResponse> viewreports = reportService.viewHistoryReport();
+//       return ResponseEntity.ok(viewreports);
+//   }
 }
