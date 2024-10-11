@@ -4,6 +4,7 @@ import com.example.SV_Market.dto.UserDto;
 import com.example.SV_Market.dto.UserUpdateRequest;
 import com.example.SV_Market.entity.User;
 import com.example.SV_Market.request.LoginRequest;
+import com.example.SV_Market.request.UpgradeRequest;
 import com.example.SV_Market.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -61,6 +62,10 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
+    }
+    @PutMapping("/upgrade")
+    public ResponseEntity<User> upgradeUserRole(@RequestBody UpgradeRequest upgradeRequest) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.upgradeUserRole(upgradeRequest));
     }
 
 }

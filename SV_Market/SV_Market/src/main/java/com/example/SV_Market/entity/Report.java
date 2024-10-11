@@ -16,18 +16,16 @@ public class Report {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "report_id")
     private String reportId;
-    private String description;
-    private String responseMessage;
     private String title;
-    private String type;
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false, referencedColumnName = "product_id")
     private Product product;
     @ManyToOne
     @JoinColumn(name = "userid", nullable = false, referencedColumnName = "userid")
     private User user;
-
-
+    private String description;
+    private String state;
+    private String responseMessage;
 
 
 }

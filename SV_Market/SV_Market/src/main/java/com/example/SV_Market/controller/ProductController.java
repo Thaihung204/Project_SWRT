@@ -3,6 +3,7 @@ package com.example.SV_Market.controller;
 import com.example.SV_Market.entity.Product;
 import com.example.SV_Market.request.ProductCreationRequest;
 import com.example.SV_Market.request.ProductUpdateRequest;
+import com.example.SV_Market.response.ProductResponse;
 import com.example.SV_Market.service.CloudinaryService;
 import com.example.SV_Market.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +26,14 @@ public class ProductController {
     @PostMapping()
 
     Product createProduct(@ModelAttribute  ProductCreationRequest request){
-
         return productService.createProduct(request);
     }
+
+
+    // Get all products
+//    @GetMapping
+//    public List<ProductResponse> getProducts() {
+//        return productService.getProducts();
 
 //    @GetMapping()
 //    List<Product> getProducts(){
@@ -38,19 +44,39 @@ public class ProductController {
         return productService.getPublicProduct("public");
     }
 
-
+    // Get a product by ID
     @GetMapping("/{productId}")
     public ResponseEntity<Product> getProductById(@PathVariable String productId) {
         Product product = productService.getProductById(productId);
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
-    @PutMapping("/{productId}")
-    Product updateProduct(@PathVariable String productId, @RequestBody ProductUpdateRequest request) {
-        return productService.updateProduct(productId, request);
+
+    // Get public products by user ID
+    @GetMapping("/shop")
+    public ResponseEntity<List<ProductResponse>> getProductsByUserIdAndStatus(
+            @RequestParam(value = "userId", required = false) String userId,
+            @RequestParam(value = "status", required = false) String status) {
+        List<ProductResponse> products = productService.getPublicProductsByUserId(userId,status);
+        return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
+    // Update a product
+    @PutMapping("/{productId}")
+    public ResponseEntity<Product> updateProduct(@PathVariable String productId, @RequestBody ProductUpdateRequest request) {
+        Product updatedProduct = productService.updateProduct(productId, request);
+        return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
+    }
+
+    @PutMapping()
+    public void updateProductStatus(
+            @RequestParam(value = "productId", required = false) String productId,
+            @RequestParam(value = "status", required = false) String status
+    ) {
+        productService.updateProductStatus(productId, status);
+    }
 //    @PostMapping
-//    public String[] createProduct2(@ModelAttribute ProductCreationRequest request) throws IOException {
+//    public String[] uploadImages(@ModelAttribute ProductCreationRequest request) throws IOException {
 //        return cloudinaryService.uploadProductImage(request.getImages());
 //    }
+
 }
