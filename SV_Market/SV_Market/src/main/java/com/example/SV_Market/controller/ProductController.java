@@ -61,13 +61,13 @@ public class ProductController {
     }
 
     // Update a product
-    @PutMapping("/{productId}")
-    public ResponseEntity<Product> updateProduct(@PathVariable String productId, @RequestBody ProductUpdateRequest request) {
-        Product updatedProduct = productService.updateProduct(productId, request);
-        return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
-    }
+//    @PutMapping("/update/{productId}")
+//    public ResponseEntity<Product> updateProduct(@PathVariable String productId, @RequestBody ProductUpdateRequest request) {
+//        Product updatedProduct = productService.updateProduct(productId, request);
+//        return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
+//    }
 
-    @PutMapping()
+    @PutMapping("/update")
     public void updateProductStatus(
             @RequestParam(value = "productId", required = false) String productId,
             @RequestParam(value = "status", required = false) String status
