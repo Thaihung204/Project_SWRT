@@ -110,10 +110,7 @@ public class VNPayService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
     public List<BalanceFluctuation> getBalanceFluctuationList(String userId){
-         Optional<BalanceFluctuation> list = paymentRepository.findByUserId(userId);
-         if (list.isPresent()){
-            return list.stream().toList();
-         }
-         return null;
+         return paymentRepository.findByUserId(userId);
+
     }
 }
