@@ -19,7 +19,7 @@ import java.util.List;
 
 @RestController
 
-//@CrossOrigin("*")
+@CrossOrigin("*")
 //@RequestMapping("/reportadmins")
 //public class AdminController {
 //

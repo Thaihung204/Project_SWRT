@@ -1,12 +1,14 @@
 package com.example.SV_Market.service;
 
 
+import com.example.SV_Market.entity.Category;
 import com.example.SV_Market.entity.Product;
 import com.example.SV_Market.entity.Report;
+import com.example.SV_Market.entity.User;
 import com.example.SV_Market.repository.ProductRepository;
 import com.example.SV_Market.repository.ReportRepository;
 import com.example.SV_Market.request.FeedbackCreationRequest;
-import com.example.SV_Market.response.ReportResponse;
+import com.example.SV_Market.response.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.example.SV_Market.request.ReportCreationRequest;
@@ -54,5 +56,21 @@ public class ReportService {
             return response;
         }).collect(Collectors.toList());
     }
+
+    public List<ReportResponse> getReportByState(String state){
+        List<Report> reports = reportRepository.getReportbyState(state);
+        return reports.stream().map(report -> {
+            ReportResponse response = new ReportResponse();
+            response.setTitle(report.getTitle());
+            response.setProductName(report.getProduct().getProductName());
+            response.setUserName(report.getUser().getUserName());
+            response.setState(report.getState());
+            response.setDescription(report.getDescription());
+            response.setResponseMessage(report.getResponseMessage());
+
+            return response;
+        }).collect(Collectors.toList());
+    }
+
 }
 

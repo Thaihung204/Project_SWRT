@@ -6,6 +6,7 @@ import com.example.SV_Market.request.ReportCreationRequest;
 import com.example.SV_Market.response.ReportResponse;
 import com.example.SV_Market.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,8 +30,16 @@ public class ReportController {
     public ResponseEntity<List<ReportResponse>> viewHistoryReport(@RequestParam(value = "userId", required = false) String userId) {
         List<ReportResponse> reportHistory = reportService.viewHistoryReport(userId);
         return ResponseEntity.ok(reportHistory); // Trả về danh sách các report cùng với productName
-
     }
+
+    @GetMapping("/admin/history")
+//    public List<ReportResponse> getReportByState() {
+//        return reportService.getReportByState("Chưa giải quyết");
+//    }
+    public ResponseEntity<?> getReportByState() {
+        return ResponseEntity.status(HttpStatus.OK).body(reportService.getReportByState("Chưa giải quyết"));
+    }
+
 
 
 
