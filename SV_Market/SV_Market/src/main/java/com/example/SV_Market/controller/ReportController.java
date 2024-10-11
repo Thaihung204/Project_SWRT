@@ -36,11 +36,7 @@ public class ReportController {
     }
 
 
-    @GetMapping("/viewreports")
-    public ResponseEntity<List<ReportResponse>> viewReports() {
-        List<ReportResponse> viewreports = reportService.viewReports();
-        return ResponseEntity.ok(viewreports);
-    }
+
 
 
 }
