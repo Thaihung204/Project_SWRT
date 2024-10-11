@@ -24,7 +24,7 @@ public class Report {
     @JoinColumn(name = "userid", nullable = false, referencedColumnName = "userid")
     private User user;
     private String description;
-    private String type;
+    private String state;
     private String responseMessage;
 
 }
