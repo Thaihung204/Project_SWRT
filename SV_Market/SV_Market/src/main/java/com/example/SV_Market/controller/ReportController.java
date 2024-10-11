@@ -20,6 +20,7 @@ public class ReportController {
 
     @PostMapping()
     Report createReport(@RequestBody ReportCreationRequest request) {
+
         return reportService.createReport(request);
     }
 
@@ -30,6 +31,8 @@ public class ReportController {
         return ResponseEntity.ok(reportHistory); // Trả về danh sách các report cùng với productName
 
     }
+
+
 
 
 

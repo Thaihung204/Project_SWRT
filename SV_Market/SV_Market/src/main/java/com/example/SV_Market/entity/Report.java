@@ -27,4 +27,5 @@ public class Report {
     private String state;
     private String responseMessage;
 
+
 }
