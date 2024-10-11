@@ -1,8 +1,11 @@
 package com.example.SV_Market.service;
 
 
+import com.example.SV_Market.entity.Product;
 import com.example.SV_Market.entity.Report;
+import com.example.SV_Market.repository.ProductRepository;
 import com.example.SV_Market.repository.ReportRepository;
+import com.example.SV_Market.request.FeedbackCreationRequest;
 import com.example.SV_Market.response.ReportResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,6 +13,7 @@ import com.example.SV_Market.request.ReportCreationRequest;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
