@@ -66,6 +66,14 @@ public class ProductController {
         Product updatedProduct = productService.updateProduct(productId, request);
         return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
     }
+
+    @PutMapping()
+    public void updateProductStatus(
+            @RequestParam(value = "productId", required = false) String productId,
+            @RequestParam(value = "status", required = false) String status
+    ) {
+        productService.updateProductStatus(productId, status);
+    }
 //    @PostMapping
 //    public String[] uploadImages(@ModelAttribute ProductCreationRequest request) throws IOException {
 //        return cloudinaryService.uploadProductImage(request.getImages());

@@ -84,9 +84,7 @@ public class ProductService {
 
     public Product updateProduct(String productId, ProductUpdateRequest request){
         Product product = getProductById(productId);
-
         LocalDate currentDate = LocalDate.now();
-
         product.setProductName(request.getProductName());
         product.setQuantity(request.getQuantity());
         product.setPrice(request.getPrice());
@@ -95,7 +93,11 @@ public class ProductService {
         product.setState(request.getState());
         product.setStatus(request.getStatus());
         product.setCreate_at(currentDate);
-
+        return productRepository.save(product);
+    }
+    public Product updateProductStatus(String productId, String status){
+        Product product = getProductById(productId);
+        product.setStatus(status);
         return productRepository.save(product);
     }
 
