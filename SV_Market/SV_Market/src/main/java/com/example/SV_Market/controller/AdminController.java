@@ -19,7 +19,7 @@ public class AdminController {
     private ReportService reportService;
 
     @GetMapping()
-    public ResponseEntity<List<ReportResponse>> viewReports() {
+    public ResponseEntity<List<ReportResponse>> Getviewreports() {
         List<ReportResponse> viewreports = reportService.viewReports();
         return ResponseEntity.ok(viewreports);
     }
