@@ -16,6 +16,6 @@ public class ReportCreationRequest {
     private String productId;
 
     private String description;
-    private String type;
+    private String state;
     private String responseMessage;
 }
