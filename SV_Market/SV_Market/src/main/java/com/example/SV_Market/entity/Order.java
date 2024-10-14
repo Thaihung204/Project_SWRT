@@ -1,5 +1,7 @@
 package com.example.SV_Market.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,6 +17,8 @@ import java.util.List;
 @Table(name = "orders") // Avoid using reserved keywords like "Order" for table names
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Order {
 
     @Id
@@ -45,6 +49,4 @@ public class Order {
     @Column(name = "create_at", nullable = false)
     private LocalDate createAt;
 
-    @Column(name = "update_at")
-    private LocalDate updateAt;
 }

@@ -1,5 +1,8 @@
 package com.example.SV_Market.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,24 +14,30 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class    OrderDetail {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+public class OrderDetail {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "order_detail_id", length = 50)
     private String orderDetailId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+
+    @ManyToOne()
     @JoinColumn(name = "order_id", nullable = false, referencedColumnName = "order_id")
     private Order order;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne()
     @JoinColumn(name = "product_id", nullable = false, referencedColumnName = "product_id")
     private Product product;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "trade_product_id", nullable = false, referencedColumnName = "product_id")
-    private Product tradeProduct;
+    private int quantity;
+
+    @OneToOne()
+    @JoinColumn(name = "product_trade_id", referencedColumnName = "product_id")
+    private Product productTrade;
 
 
 }

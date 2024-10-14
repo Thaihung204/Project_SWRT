@@ -162,6 +162,7 @@ public class ProductService {
                 feedbackResponse.setRating(feedback.getRating());
                 feedbackResponse.setDescription(feedback.getDescription());
                 feedbackResponse.setCreatedAt(feedback.getCreatedAt());
+                
                 return feedbackResponse;
             }).collect(Collectors.toList());
             response.setFeedBacks(feedbackResponses);
