@@ -3,6 +3,7 @@ package com.example.SV_Market.service;
 import com.example.SV_Market.entity.Category;
 import com.example.SV_Market.repository.CategoryRepository;
 import com.example.SV_Market.request.CategoryCreationRequest;
+import com.example.SV_Market.request.CategoryUpdateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +32,19 @@ public class CategoryService {
     public Category getCategory(String categoryId){
         return categoryRepository.findById(categoryId).orElseThrow(() -> new RuntimeException("Category Not Found!"));
     }
+
+    public Category updateCategory(String categoryId, CategoryUpdateRequest request) {
+        Category category = getCategory(categoryId);
+        category.setTitle(request.getTitle());
+        category.setDescription(request.getDescription());
+        category.setImage(request.getImage());
+        return categoryRepository.save(category);
+    }
+
+    public void deleteCategory(String categoryId) {
+        categoryRepository.deleteById(categoryId);
+    }
+
 
 //    public Product updateProduct(String productId, ProductUpdateRequest request){
 //        Product product = getProduct(productId);
