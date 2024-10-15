@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class ReportResponse {
+    private String reportId;
     private String title;
     private String description;
     private String state;

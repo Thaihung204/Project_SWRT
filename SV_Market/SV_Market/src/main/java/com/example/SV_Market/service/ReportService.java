@@ -61,6 +61,7 @@ public class ReportService {
         List<Report> reports = reportRepository.getReportbyState(state);
         return reports.stream().map(report -> {
             ReportResponse response = new ReportResponse();
+            response.setReportId(report.getReportId());
             response.setTitle(report.getTitle());
             response.setProductName(report.getProduct().getProductName());
             response.setUserName(report.getUser().getUserName());

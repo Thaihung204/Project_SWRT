@@ -37,7 +37,7 @@ public class ReportController {
 //        return reportService.getReportByState("Chưa giải quyết");
 //    }
     public ResponseEntity<?> getReportByState() {
-        return ResponseEntity.status(HttpStatus.OK).body(reportService.getReportByState("Chưa giải quyết"));
+        return ResponseEntity.status(HttpStatus.OK).body(reportService.getReportByState("pending"));
     }
 
 
