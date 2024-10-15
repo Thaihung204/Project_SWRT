@@ -65,20 +65,20 @@ public class ProductService {
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
     }
 
-    public List <Product> getPublicProduct(String status) {
-        return productRepository.findByStatus(status);
+    public List <ProductResponse> getPublicProduct(String status) {
+        return  formatListProductResponse(productRepository.findByStatus(status));
     }
 
-    public List<Product> getAllProducts(){
-        return productRepository.findAll();
+    public List<ProductResponse> getAllProducts(){
+        return formatListProductResponse(productRepository.findAll());
     }
 
     public List<ProductResponse> getProducts() {
-        return formatProductresponse(productRepository.findAll());
+        return formatListProductResponse(productRepository.findAll());
 
     }
     public List<ProductResponse> getPublicProductsByUserId(String userId, String status) {
-        return formatProductresponse(productRepository.findProductsByUserIdAndStatus(userId, status));
+        return formatListProductResponse(productRepository.findProductsByUserIdAndStatus(userId, status));
     }
 
 
@@ -115,8 +115,12 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    public List<ProductResponse> formatProductresponse(List<Product> products){
-        return products.stream().map(product -> {
+    public void deleteProduct(String productId){
+        productRepository.deleteById(productId);
+    }
+
+    public ProductResponse formatProductResponse(Product product){
+
             ProductResponse response = new ProductResponse();
             response.setProductId(product.getProductId());
             response.setProductName(product.getProductName());
@@ -166,6 +170,62 @@ public class ProductService {
                 return feedbackResponse;
             }).collect(Collectors.toList());
             response.setFeedBacks(feedbackResponses);
+
+            return response;
+
+    }
+
+    public List<ProductResponse> formatListProductResponse(List<Product> products){
+        return products.stream().map(product -> {
+            ProductResponse response = new ProductResponse();
+            response.setProductId(product.getProductId());
+            response.setProductName(product.getProductName());
+
+            User user = product.getUser();
+            UserResponse userResponse = new UserResponse();
+            userResponse.setUserName(user.getUserName());
+            userResponse.setAddress(user.getAddress());
+            userResponse.setProfilePicture(user.getProfilePicture());
+
+            response.setUser(userResponse);
+
+            List<ProductImageResponse> imageResponses = product.getImages().stream().map(image -> {
+                ProductImageResponse imageResponse = new ProductImageResponse();
+                imageResponse.setPath(image.getPath());
+                return imageResponse;
+            }).collect(Collectors.toList());
+
+            response.setImages(imageResponses);
+            response.setQuantity(product.getQuantity());
+            response.setPrice(product.getPrice());
+            response.setDescription(product.getDescription());
+
+//            Category category = product.getCategory();
+//            CategoryResponse categoryResponse = new CategoryResponse();
+//            categoryResponse.setTitle(category.getTitle());
+//            categoryResponse.setDescription(category.getDescription());
+//            categoryResponse.setImage(category.getImage());
+//            response.setCategory(categoryResponse);
+
+//            response.setType(product.getType());
+//            response.setState(product.getState());
+            response.setCreate_at(product.getCreate_at());
+
+//            List<FeedbackResponse> feedbackResponses = product.getFeedBacks().stream().map(feedback -> {
+//                FeedbackResponse feedbackResponse = new FeedbackResponse();
+//
+//                User fuser = feedback.getSender();
+//                UserResponse fuserResponse = new UserResponse();
+//                fuserResponse.setUserName(fuser.getUserName());
+//                fuserResponse.setProfilePicture(fuser.getProfilePicture());
+//                feedbackResponse.setSender(fuserResponse);
+//                feedbackResponse.setRating(feedback.getRating());
+//                feedbackResponse.setDescription(feedback.getDescription());
+//                feedbackResponse.setCreatedAt(feedback.getCreatedAt());
+//
+//                return feedbackResponse;
+//            }).collect(Collectors.toList());
+//            response.setFeedBacks(feedbackResponses);
 
             return response;
         }).collect(Collectors.toList());

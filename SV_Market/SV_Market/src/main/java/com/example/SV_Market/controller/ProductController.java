@@ -2,7 +2,6 @@ package com.example.SV_Market.controller;
 
 import com.example.SV_Market.entity.Product;
 import com.example.SV_Market.request.ProductCreationRequest;
-import com.example.SV_Market.request.ProductUpdateRequest;
 import com.example.SV_Market.response.ProductResponse;
 import com.example.SV_Market.service.CloudinaryService;
 import com.example.SV_Market.service.ProductService;
@@ -11,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -40,15 +38,15 @@ public class ProductController {
 //        return productService.getAllProducts();
 //    }
     @GetMapping()
-    List<Product> getPublicProduct(){
+    List<ProductResponse> getPublicProduct(){
         return productService.getPublicProduct("public");
     }
 
     // Get a product by ID
     @GetMapping("/{productId}")
-    public ResponseEntity<Product> getProductById(@PathVariable String productId) {
+    public ProductResponse getProductById(@PathVariable String productId) {
         Product product = productService.getProductById(productId);
-        return new ResponseEntity<>(product, HttpStatus.OK);
+        return productService.formatProductResponse(product);
     }
 
     // Get public products by user ID
@@ -78,5 +76,11 @@ public class ProductController {
 //    public String[] uploadImages(@ModelAttribute ProductCreationRequest request) throws IOException {
 //        return cloudinaryService.uploadProductImage(request.getImages());
 //    }
+
+    @DeleteMapping("/{productId}")
+    public String deleteProduct(@PathVariable String productId){
+        productService.deleteProduct(productId);
+        return "Product has been deleted";
+    }
 
 }
