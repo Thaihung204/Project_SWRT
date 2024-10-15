@@ -42,7 +42,11 @@ public class ReportController {
 
 
 
-
+    @PostMapping("/answerReport")
+    public ResponseEntity<Report> answerReport(@RequestParam String reportId, @RequestParam String responseMessage) {
+        Report updatedReport = reportService.answerReport(reportId, responseMessage);
+        return ResponseEntity.ok(updatedReport);
+    }
 
 
 }
