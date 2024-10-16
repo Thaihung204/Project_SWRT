@@ -21,7 +21,7 @@ public class CategoryController {
     @PostMapping()
     public Category createCategory(@RequestPart("request") CategoryCreationRequest request,
                                    @RequestPart("images") MultipartFile[] images) {
-        return categoryService.createCategory(request, images);
+        return categoryService.createCategory(request);
     }
 
     @GetMapping()
@@ -38,7 +38,7 @@ public class CategoryController {
     public Category updateCategory(@PathVariable String categoryId,
                                    @RequestPart("request") CategoryUpdateRequest request,
                                    @RequestPart("images") MultipartFile[] newImages) {
-        return categoryService.updateCategory(categoryId, request, newImages);
+        return categoryService.updateCategory(categoryId, request);
     }
 
     @DeleteMapping("/{categoryId}")

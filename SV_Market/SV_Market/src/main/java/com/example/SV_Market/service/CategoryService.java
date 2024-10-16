@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CategoryService {
@@ -22,42 +23,26 @@ public class CategoryService {
     private CloudinaryService cloudinaryService;
 
     // Create Category with Images
-    public Category createCategory(CategoryCreationRequest request, MultipartFile[] images) {
+    public Category createCategory(CategoryCreationRequest request) {
         Category category = new Category();
 
         // Upload images to cloud and create CategoryImage objects
-        List<CategoryImage> categoryImages = new ArrayList<>();
-        for (String imagePath : cloudinaryService.uploadProductImage(images)) {
-            CategoryImage categoryImage = new CategoryImage();
-            categoryImage.setPath(imagePath);
-            categoryImage.setCategory(category);
-            categoryImages.add(categoryImage);
-        }
-
         category.setTitle(request.getTitle());
         category.setDescription(request.getDescription());
-        category.setImage(categoryImages); // Set images
+        category.setImage(cloudinaryService.upload(request.getImage()));
 
         return categoryRepository.save(category);
     }
 
     // Update Category with New Images
-    public Category updateCategory(String categoryId, CategoryUpdateRequest request, MultipartFile[] newImages) {
+    public Category updateCategory(String categoryId, CategoryUpdateRequest request) {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new RuntimeException("Category Not Found!"));
 
         // Upload new images and update the CategoryImage list
-        List<CategoryImage> categoryImages = new ArrayList<>();
-        for (String imagePath : cloudinaryService.uploadProductImage(newImages)) {
-            CategoryImage categoryImage = new CategoryImage();
-            categoryImage.setPath(imagePath);
-            categoryImage.setCategory(category); // Associate image with category
-            categoryImages.add(categoryImage);
-        }
-
         category.setTitle(request.getTitle());
         category.setDescription(request.getDescription());
-        category.setImage(categoryImages); // Update images
+        category.setImage(cloudinaryService.upload(request.getImage()));
 
         return categoryRepository.save(category);
     }
@@ -69,8 +54,14 @@ public class CategoryService {
 
     // Get a specific Category by ID
     public Category getCategory(String categoryId) {
-        return categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new RuntimeException("Category Not Found!"));
+        Optional<Category> findId = categoryRepository.findById(categoryId);
+        if(findId.isPresent()){
+            Category temp = findId.get();
+            temp.setProducts(null);
+            return temp;
+        }
+        return null;
+//                .orElseThrow(() -> new RuntimeException("Category Not Found!"));
     }
 
     // Delete Category by ID
