@@ -1,66 +1,84 @@
 package com.example.SV_Market.service;
 
 import com.example.SV_Market.entity.Category;
+import com.example.SV_Market.entity.CategoryImage;
 import com.example.SV_Market.repository.CategoryRepository;
 import com.example.SV_Market.request.CategoryCreationRequest;
 import com.example.SV_Market.request.CategoryUpdateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
-
 
 @Service
 public class CategoryService {
-    @Autowired
-    CategoryRepository categoryRepository;
 
-    public Category createCategory(CategoryCreationRequest request){
+    @Autowired
+    private CategoryRepository categoryRepository;
+
+    @Autowired
+    private CloudinaryService cloudinaryService;
+
+    // Create Category with Images
+    public Category createCategory(CategoryCreationRequest request, MultipartFile[] images) {
         Category category = new Category();
+
+        // Upload images to cloud and create CategoryImage objects
+        List<CategoryImage> categoryImages = new ArrayList<>();
+        for (String imagePath : cloudinaryService.uploadProductImage(images)) {
+            CategoryImage categoryImage = new CategoryImage();
+            categoryImage.setPath(imagePath);
+            categoryImage.setCategory(category);
+            categoryImages.add(categoryImage);
+        }
+
         category.setTitle(request.getTitle());
         category.setDescription(request.getDescription());
-        category.setImage(request.getImage());
-
+        category.setImage(categoryImages); // Set images
 
         return categoryRepository.save(category);
     }
 
-    public List<Category> getCategories(){
+    // Update Category with New Images
+    public Category updateCategory(String categoryId, CategoryUpdateRequest request, MultipartFile[] newImages) {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new RuntimeException("Category Not Found!"));
+
+        // Upload new images and update the CategoryImage list
+        List<CategoryImage> categoryImages = new ArrayList<>();
+        for (String imagePath : cloudinaryService.uploadProductImage(newImages)) {
+            CategoryImage categoryImage = new CategoryImage();
+            categoryImage.setPath(imagePath);
+            categoryImage.setCategory(category); // Associate image with category
+            categoryImages.add(categoryImage);
+        }
+
+        category.setTitle(request.getTitle());
+        category.setDescription(request.getDescription());
+        category.setImage(categoryImages); // Update images
+
+        return categoryRepository.save(category);
+    }
+
+    // Get all Categories
+    public List<Category> getCategories() {
         return categoryRepository.findAll();
     }
 
-    public Category getCategory(String categoryId){
-        return categoryRepository.findById(categoryId).orElseThrow(() -> new RuntimeException("Category Not Found!"));
+    // Get a specific Category by ID
+    public Category getCategory(String categoryId) {
+        return categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new RuntimeException("Category Not Found!"));
     }
 
-    public Category updateCategory(String categoryId, CategoryUpdateRequest request) {
-        Category category = getCategory(categoryId);
-        category.setTitle(request.getTitle());
-        category.setDescription(request.getDescription());
-        category.setImage(request.getImage());
-        return categoryRepository.save(category);
-    }
-
+    // Delete Category by ID
     public void deleteCategory(String categoryId) {
-        categoryRepository.deleteById(categoryId);
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new RuntimeException("Category not found with id: " + categoryId));
+
+        // Xóa Category và tất cả các Product liên quan nhờ cascade và orphanRemoval
+        categoryRepository.delete(category);
     }
-
-
-//    public Product updateProduct(String productId, ProductUpdateRequest request){
-//        Product product = getProduct(productId);
-//
-//        LocalDate currentDate = LocalDate.now();
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-//        String formattedDate = currentDate.format(formatter);
-//
-//        product.setProductName(request.getProductName());
-//        product.setQuantity(request.getQuantity());
-//        product.setPrice(request.getPrice());
-//        product.setDescription(request.getDescription());
-//        product.setCategoryId(request.getCategoryId());
-//        product.setState(request.getState());
-//        product.setCreate_at(currentDate);
-//
-//        return productRepository.save(product);
-//    }
 }

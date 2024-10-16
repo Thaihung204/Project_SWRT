@@ -148,7 +148,9 @@ public class ProductService {
             CategoryResponse categoryResponse = new CategoryResponse();
             categoryResponse.setTitle(category.getTitle());
             categoryResponse.setDescription(category.getDescription());
-            categoryResponse.setImage(category.getImage());
+        if (!category.getImage().isEmpty()) {
+            categoryResponse.setImage(category.getImage().get(0).getPath());
+        }
 
             response.setCategory(categoryResponse);
             response.setType(product.getType());
