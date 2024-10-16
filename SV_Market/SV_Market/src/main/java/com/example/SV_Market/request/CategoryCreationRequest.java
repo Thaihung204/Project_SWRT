@@ -4,15 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CategoryCreationRequest {
+public class  CategoryCreationRequest {
 //    private String categoryId;
     private String title;
     private String description;
-    private String image;
+    private MultipartFile image;
 
 }
