@@ -30,29 +30,34 @@ public class OrderService {
     @Autowired
     UserService userService ;
 
-    public Order createOrder(OrderCreationRequest request){
-        Order order = new Order();
+    public String createOrder(List<OrderCreationRequest> requests){
+
         LocalDate currentDate = LocalDate.now();
-        List<OrderDetail> orderDetails =
-        request.getOrderDetails().stream().map(o -> {
-            OrderDetail orderDetail = new OrderDetail();
-            orderDetail.setProduct(productService.getProductById(o.getProductId()));
-            if(request.getType().equals("exchange"))
-                orderDetail.setProductTrade(productService.getProductById(o.getProductTradeId()));
 
-            orderDetail.setQuantity(o.getQuantity());
-            orderDetail.setOrder(order);
-            return orderDetail;
+        requests.stream().map(request -> {
+            Order order = new Order();
+            List<OrderDetail> orderDetails =
+                    request.getOrderDetails().stream().map(o -> {
+                        OrderDetail orderDetail = new OrderDetail();
+                        orderDetail.setProduct(productService.getProductById(o.getProductId()));
+                        if(request.getType().equals("exchange"))
+                            orderDetail.setProductTrade(productService.getProductById(o.getProductTradeId()));
+
+                        orderDetail.setQuantity(o.getQuantity());
+                        orderDetail.setOrder(order);
+                        return orderDetail;
+                    }).collect(Collectors.toList());
+            order.setOrderDetails(orderDetails);
+            order.setSeller(userService.getUserById(request.getSellerId()));
+            order.setBuyer(userService.getUserById(request.getBuyerId()));
+            order.setType(request.getType());
+            order.setState("pending");
+            order.setPaymentBy(request.getPaymentBy());
+            order.setCreateAt(currentDate);
+
+            return orderRepository.save(order);
         }).collect(Collectors.toList());
-        order.setOrderDetails(orderDetails);
-        order.setSeller(userService.getUserById(request.getSellerId()));
-        order.setBuyer(userService.getUserById(request.getBuyerId()));
-        order.setType(request.getType());
-        order.setState("pending");
-        order.setPaymentBy(request.getPaymentBy());
-        order.setCreateAt(currentDate);
-
-        return orderRepository.save(order);
+    return "Order has been created";
     }
 
     public List<OrderResponse> getAllOrder(){
