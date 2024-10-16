@@ -69,6 +69,13 @@ public class OrderService {
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
     }
 
+    public List<OrderResponse> getOrderBySellerIdAndState(String sellId, String state){
+        return formatListOrder(orderRepository.findOrdersBySellerIdAndState(sellId,state));
+    }
+    public List<OrderResponse> getOrderByBuyerIdAndState(String buyId, String state){
+        return formatListOrder(orderRepository.findOrdersByBuyerIdAndState(buyId,state));
+    }
+
 //    public Product updateProduct(String productId, ProductUpdateRequest request){
 //        Product product = getProduct(productId);
 //

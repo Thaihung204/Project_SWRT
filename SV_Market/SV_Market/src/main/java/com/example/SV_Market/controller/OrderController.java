@@ -5,9 +5,12 @@ import com.example.SV_Market.entity.Order;
 import com.example.SV_Market.request.CategoryCreationRequest;
 import com.example.SV_Market.request.OrderCreationRequest;
 import com.example.SV_Market.response.OrderResponse;
+import com.example.SV_Market.response.ProductResponse;
 import com.example.SV_Market.service.CategoryService;
 import com.example.SV_Market.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,6 +36,21 @@ public class OrderController {
     @GetMapping("/{orderId}")
     OrderResponse getOrder(@PathVariable String orderId){
         return orderService.formatOrder(orderService.getOrderById(orderId));
+    }
+
+    @GetMapping("/receive")
+    public ResponseEntity<List<OrderResponse>> getOrdersBySellerIdAndState(
+            @RequestParam(value = "sell_id", required = false) String sellId,
+            @RequestParam(value = "state", required = false) String state) {
+        List<OrderResponse> orders = orderService.getOrderBySellerIdAndState(sellId,state);
+        return new ResponseEntity<>(orders, HttpStatus.OK);
+    }
+    @GetMapping("/make")
+    public ResponseEntity<List<OrderResponse>> getOrdersByBuyerIdAndState(
+            @RequestParam(value = "buy_id", required = false) String buyId,
+            @RequestParam(value = "state", required = false) String state) {
+        List<OrderResponse> orders = orderService.getOrderByBuyerIdAndState(buyId,state);
+        return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
 //    @PutMapping("/{productId}")
