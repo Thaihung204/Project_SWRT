@@ -4,6 +4,7 @@ import com.example.SV_Market.entity.Category;
 import com.example.SV_Market.entity.Order;
 import com.example.SV_Market.request.CategoryCreationRequest;
 import com.example.SV_Market.request.OrderCreationRequest;
+import com.example.SV_Market.response.OrderResponse;
 import com.example.SV_Market.service.CategoryService;
 import com.example.SV_Market.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +26,13 @@ public class OrderController {
     }
 
     @GetMapping()
-    List<Order> getAllOrder(){
+    List<OrderResponse> getAllOrder(){
         return orderService.getAllOrder();
     }
 
     @GetMapping("/{orderId}")
-    Order getOrder(@PathVariable String orderId){
-        return orderService.getOrderById(orderId);
+    OrderResponse getOrder(@PathVariable String orderId){
+        return orderService.formatOrder(orderService.getOrderById(orderId));
     }
 
 //    @PutMapping("/{productId}")

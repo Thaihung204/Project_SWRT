@@ -32,11 +32,11 @@ public class Order {
     @Column(name = "type", length = 50, nullable = false)
     private String type;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @JoinColumn(name = "sell_id", nullable = false, referencedColumnName = "userid")
     private User seller;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @JoinColumn(name = "buy_id", nullable = false, referencedColumnName = "userid")
     private User buyer;
 

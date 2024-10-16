@@ -39,5 +39,4 @@ public class OrderDetail {
     @JoinColumn(name = "product_trade_id", referencedColumnName = "product_id")
     private Product productTrade;
 
-
 }

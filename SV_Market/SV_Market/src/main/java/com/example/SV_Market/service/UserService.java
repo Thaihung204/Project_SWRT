@@ -10,6 +10,7 @@ import com.example.SV_Market.repository.SubscriptionPackageRepository;
 import com.example.SV_Market.repository.UpgradeRepository;
 import com.example.SV_Market.repository.UserRepository;
 import com.example.SV_Market.request.UpgradeRequest;
+import com.example.SV_Market.response.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -144,6 +145,15 @@ public User getUserById(String userId) {
         } else {
             return userRepository.save(user);
         }
+
+    }
+
+    public UserResponse formatUser(User user){
+        UserResponse userResponse = new UserResponse();
+        userResponse.setUserName(user.getUserName());
+        userResponse.setAddress(user.getAddress());
+        userResponse.setProfilePicture(user.getProfilePicture());
+        return userResponse;
 
     }
 }

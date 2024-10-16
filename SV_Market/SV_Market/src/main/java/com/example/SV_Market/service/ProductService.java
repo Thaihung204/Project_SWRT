@@ -231,5 +231,23 @@ public class ProductService {
         }).collect(Collectors.toList());
     }
 
+    public ProductResponse formatProductOrderResponse(Product product){
 
+            ProductResponse response = new ProductResponse();
+            response.setProductId(product.getProductId());
+            response.setProductName(product.getProductName());
+
+            List<ProductImageResponse> imageResponses = product.getImages().stream().map(image -> {
+                ProductImageResponse imageResponse = new ProductImageResponse();
+                imageResponse.setPath(image.getPath());
+                return imageResponse;
+            }).collect(Collectors.toList());
+            response.setImages(imageResponses);
+            response.setQuantity(product.getQuantity());
+            response.setPrice(product.getPrice());
+            response.setDescription(product.getDescription());
+            response.setCreate_at(product.getCreate_at());
+            return response;
+
+    }
 }
