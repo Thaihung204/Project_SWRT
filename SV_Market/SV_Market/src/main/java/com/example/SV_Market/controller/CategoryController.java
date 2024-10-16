@@ -6,6 +6,7 @@ import com.example.SV_Market.request.CategoryUpdateRequest;
 import com.example.SV_Market.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -16,9 +17,11 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
+
     @PostMapping()
-    Category createCategory(@RequestBody CategoryCreationRequest request){
-        return categoryService.createCategory(request);
+    public Category createCategory(@RequestPart("request") CategoryCreationRequest request,
+                                   @RequestPart("images") MultipartFile[] images) {
+        return categoryService.createCategory(request, images);
     }
 
     @GetMapping()
@@ -32,8 +35,10 @@ public class CategoryController {
     }
 
     @PutMapping("/{categoryId}")
-    public Category updateCategory(@PathVariable String categoryId, @RequestBody CategoryUpdateRequest request) {
-        return categoryService.updateCategory(categoryId, request);
+    public Category updateCategory(@PathVariable String categoryId,
+                                   @RequestPart("request") CategoryUpdateRequest request,
+                                   @RequestPart("images") MultipartFile[] newImages) {
+        return categoryService.updateCategory(categoryId, request, newImages);
     }
 
     @DeleteMapping("/{categoryId}")
