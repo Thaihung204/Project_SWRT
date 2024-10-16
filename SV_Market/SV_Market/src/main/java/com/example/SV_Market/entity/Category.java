@@ -14,17 +14,24 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Table(name = "category")
 public class Category {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "category_id")
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String categoryId;
-    private String title;
-    private String description;
-    private String image;
 
-//    @ManyToOne
-//    @JoinColumn(name = "product_id", nullable = false, referencedColumnName = "product_id")
-//    @JsonIgnore
-//    private List<Product> product;
+    private String title;
+
+    @Column(columnDefinition = "LONGTEXT")
+    private String description;
+
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CategoryImage> image;
+
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Product> products;
+
+
 }
