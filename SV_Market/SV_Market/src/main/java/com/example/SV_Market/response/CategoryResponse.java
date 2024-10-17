@@ -16,4 +16,7 @@ public class CategoryResponse {
     private String title;
     private String description;
     private String image;
+    public void setImage(String image) {
+        this.image = image;
+    }
 }
