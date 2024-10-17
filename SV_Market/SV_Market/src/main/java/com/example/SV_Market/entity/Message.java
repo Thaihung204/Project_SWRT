@@ -5,31 +5,33 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.time.LocalDate;
 
-import java.time.LocalDateTime;
-
-
-@Entity
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-        public class Message {
+@Entity
+
+public class Message {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String messageId;
 
     @ManyToOne
-    @JoinColumn(name = "sender_id", nullable = false, referencedColumnName = "userid")
+    @JoinColumn(name = "senderid", referencedColumnName = "userid")
     private User sender;
 
     @ManyToOne
-    @JoinColumn(name = "receiver_id", nullable = false, referencedColumnName = "userid")
+    @JoinColumn(name = "receiverid", referencedColumnName = "userid")
     private User receiver;
 
+    @Column(name = "content", nullable = false)
     private String content;
-    private LocalDateTime timestamp;
+
+    @Column(name = "created_at")
+    private LocalDate createdAt;
 
 
 }
