@@ -5,11 +5,10 @@ import com.example.SV_Market.entity.Message;
 import com.example.SV_Market.entity.User;
 import com.example.SV_Market.repository.MessageRepository;
 import com.example.SV_Market.repository.UserRepository;
-import com.example.SV_Market.request.MessageRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -20,31 +19,23 @@ public class MessageService {
 
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private UserService userService;
 
-    public Message sendMessage(MessageRequest messageDTO) {
-        User sender = userRepository.findById(messageDTO.getSenderId())
-                .orElseThrow(() -> new RuntimeException("Sender not found"));
-        User receiver = userRepository.findById(messageDTO.getReceiverId())
-                .orElseThrow(() -> new RuntimeException("Receiver not found"));
+    public Message sendMessage(String senderId, String receiverId, String content) {
 
         Message message = new Message();
-        message.setSender(sender);
-        message.setReceiver(receiver);
-        message.setContent(messageDTO.getContent());
-        message.setTimestamp(LocalDateTime.now());
-
+        User sender = userRepository.findById(senderId).orElseThrow(() -> new RuntimeException("Sender not found"));
+        User receiver = userRepository.findById(receiverId).orElseThrow(() -> new RuntimeException("Receiver not found"));
+        message.setContent(content);
+        message.setCreatedAt(LocalDate.now());
         return messageRepository.save(message);
     }
 
-    public List<Message> getMessages(String senderId, String receiverId) {
-        // Lấy thông tin User từ ID
-        User sender = userService.getUserById(senderId);
-        User receiver = userService.getUserById(receiverId);
+    public List<Message> getMessagesBetweenUsers(String senderId, String receiverId) {
+        User sender = userRepository.findById(senderId)
+                .orElseThrow(() -> new RuntimeException("Người gửi không tồn tại với ID: " + senderId));
+        User receiver = userRepository.findById(receiverId)
+                .orElseThrow(() -> new RuntimeException("Người nhận không tồn tại với ID: " + receiverId));
 
-        return messageRepository.findBySenderAndReceiverOrReceiverAndSenderOrderByTimestamp(sender, receiver, receiver, sender);
+        return messageRepository.findBySenderAndReceiverOrReceiverAndSenderOrderByCreatedAt(sender, receiver, receiver, sender);
     }
-    }
-
-
+}
