@@ -1,11 +1,16 @@
 package com.example.SV_Market.controller;
 
 import com.example.SV_Market.entity.Product;
+import com.example.SV_Market.repository.ProductRepository;
 import com.example.SV_Market.request.ProductCreationRequest;
 import com.example.SV_Market.response.ProductResponse;
 import com.example.SV_Market.service.CloudinaryService;
 import com.example.SV_Market.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +25,8 @@ public class ProductController {
     private ProductService productService;
     @Autowired
     private CloudinaryService cloudinaryService;
+    @Autowired
+    private ProductRepository productRepository;
 
     @PostMapping()
 
@@ -41,6 +48,24 @@ public class ProductController {
     List<ProductResponse> getPublicProduct(){
         return productService.getPublicProduct("public");
     }
+    @GetMapping("/listing/category")
+    ResponseEntity<?> getProductListingByCategory(@RequestParam("page") int page, @RequestParam("category") String category, @RequestParam("sort") String sort){
+        return ResponseEntity.status(HttpStatus.OK).body(productService.getProductListingByCategory(page, category, sort));
+    }
+    @GetMapping("/listing/address")
+    ResponseEntity<?> getProductListingByAddress(@RequestParam("page") int page, @RequestParam("address") String address, @RequestParam("sort") String sort){
+        return ResponseEntity.status(HttpStatus.OK).body(productService.getProductListingByAddress(page, address, sort));
+    }
+    @GetMapping("/listing")
+    ResponseEntity<?> getProductListing(@RequestParam("page") int page, @RequestParam("sort") String sort){
+        Pageable pageable = PageRequest.of(page, 30, Sort.by(sort));
+        return ResponseEntity.status(HttpStatus.OK).body(productRepository.productListing(pageable));
+    }
+    @GetMapping("/listing/filter")
+    ResponseEntity<?> getProductListingFilter(@RequestParam("page") int page, @RequestParam("category") String category, @RequestParam("sort") String sort, @RequestParam("address") String address){
+        return ResponseEntity.status(HttpStatus.OK).body(productService.getProductListingByCategoryAddress(page, category, address, sort));
+    }
+
 
     // Get a product by ID
     @GetMapping("/{productId}")
