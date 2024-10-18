@@ -133,11 +133,11 @@ public class ProductService {
     }
     public Page<Product> getProductListingByAddress(int page,String address, String sort){
         Pageable pageable = PageRequest.of(page,30, Sort.by(sort));
-        List<Product> products = productRepository.productListing(pageable)
+        List<Product> products = productRepository.findAll()
                 .stream()
                 .filter(product -> product.getUser().getAddress().contains(address)) // Lọc theo address
                 .collect(Collectors.toList());
-        return new PageImpl<>(products);
+        return new PageImpl<>(products,pageable,products.size());
     }
 
     public void deleteProduct(String productId){
