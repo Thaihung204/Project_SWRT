@@ -48,25 +48,16 @@ public class ProductController {
     List<ProductResponse> getPublicProduct(){
         return productService.getPublicProduct("public");
     }
-    @GetMapping("/listing/category")
-    ResponseEntity<?> getProductListingByCategory(@RequestParam("page") int page, @RequestParam("category") String category, @RequestParam("sort") String sort){
-        return ResponseEntity.status(HttpStatus.OK).body(productService.getProductListingByCategory(page, category, sort));
-    }
-    @GetMapping("/listing/address")
-    ResponseEntity<?> getProductListingByAddress(@RequestParam("page") int page, @RequestParam("address") String address, @RequestParam("sort") String sort){
-        return ResponseEntity.status(HttpStatus.OK).body(productService.getProductListingByAddress(page, address, sort));
-    }
     @GetMapping("/listing")
-    ResponseEntity<?> getProductListing(@RequestParam("page") int page, @RequestParam("sort") String sort){
-        Pageable pageable = PageRequest.of(page, 30, Sort.by(sort));
-        return ResponseEntity.status(HttpStatus.OK).body(productRepository.productListing(pageable));
+    ResponseEntity<?> getProductListing(
+            @RequestParam("page") int page,
+            @RequestParam("sort") String sort,
+            @RequestParam(value = "category", required = false) String category,
+            @RequestParam(value = "address", required = false) String address,
+            @RequestParam(value = "productName", required = false) String name) {
+        return ResponseEntity.status(HttpStatus.OK).body(
+                productService.getProductListing(page, sort, category, address, name));
     }
-    @GetMapping("/listing/filter")
-    ResponseEntity<?> getProductListingFilter(@RequestParam("page") int page, @RequestParam("category") String category, @RequestParam("sort") String sort, @RequestParam("address") String address){
-        return ResponseEntity.status(HttpStatus.OK).body(productService.getProductListingByCategoryAddress(page, category, address, sort));
-    }
-
-
     // Get a product by ID
     @GetMapping("/{productId}")
     public ProductResponse getProductById(@PathVariable String productId) {
