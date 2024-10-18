@@ -4,12 +4,14 @@ import com.example.SV_Market.entity.Category;
 import com.example.SV_Market.entity.Product;
 import com.example.SV_Market.entity.ProductImage;
 import com.example.SV_Market.entity.User;
+import com.example.SV_Market.repository.CategoryRepository;
 import com.example.SV_Market.repository.ProductRepository;
 import com.example.SV_Market.request.ProductCreationRequest;
 import com.example.SV_Market.request.ProductUpdateRequest;
 import com.example.SV_Market.response.*;
 import com.example.SV_Market.request.SensorProductRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -21,7 +23,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
-
+    @Autowired
+    CategoryRepository categoryRepository;
     @Autowired
     ProductRepository productRepository;
     @Autowired
@@ -113,6 +116,28 @@ public class ProductService {
         Product product = getProductById(request.getProductId());
         product.setStatus(request.getStatus());
         return productRepository.save(product);
+    }
+
+    public Page<Product> getProductListingByCategory(int page,String categoryId, String sort){
+        Pageable pageable = PageRequest.of(page,30, Sort.by(sort));
+        return productRepository.productListingByCategoryId(pageable,categoryId);
+    }
+    public Page<Product> getProductListingByCategoryAddress(int page,String categoryId, String address, String sort){
+        Pageable pageable = PageRequest.of(page,30, Sort.by(sort));
+        List<Product> productList = productRepository.findByCategory(categoryRepository.findById(categoryId).get());
+        List<Product> byAddress = productList
+                .stream() // Chuyển đổi Page thành Stream
+                .filter(product -> product.getUser().getAddress().contains(address)) // Lọc theo address
+                .collect(Collectors.toList()); // Chuyển đổi Stream thành List
+        return new PageImpl<>(byAddress,pageable,productList.size());
+    }
+    public Page<Product> getProductListingByAddress(int page,String address, String sort){
+        Pageable pageable = PageRequest.of(page,30, Sort.by(sort));
+        List<Product> products = productRepository.findAll()
+                .stream()
+                .filter(product -> product.getUser().getAddress().contains(address)) // Lọc theo address
+                .collect(Collectors.toList());
+        return new PageImpl<>(products,pageable,products.size());
     }
 
     public void deleteProduct(String productId){
