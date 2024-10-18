@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 @Service
@@ -118,27 +119,30 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    public Page<Product> getProductListingByCategory(int page,String categoryId, String sort){
-        Pageable pageable = PageRequest.of(page,30, Sort.by(sort));
-        return productRepository.productListingByCategoryId(pageable,categoryId);
+    public Page<Product> getProductListing(
+            int page, String sort, String categoryId, String address, String name) {
+
+        Pageable pageable = PageRequest.of(page, 30, Sort.by(sort));
+        Stream<Product> productsStream = productRepository.findAll().stream();
+
+        if (categoryId != null) {
+            productsStream = productsStream
+                    .filter(product -> product.getCategory().getCategoryId().equals(categoryId));
+        }
+        if (address != null) {
+            productsStream = productsStream
+                    .filter(product -> product.getUser().getAddress().contains(address));
+        }
+        if (name != null) {
+            productsStream = productsStream
+                    .filter(product -> product.getProductName().contains(name));
+        }
+
+        List<Product> filteredProducts = productsStream.collect(Collectors.toList());
+        return new PageImpl<>(filteredProducts, pageable, filteredProducts.size());
     }
-    public Page<Product> getProductListingByCategoryAddress(int page,String categoryId, String address, String sort){
-        Pageable pageable = PageRequest.of(page,30, Sort.by(sort));
-        List<Product> productList = productRepository.findByCategory(categoryRepository.findById(categoryId).get());
-        List<Product> byAddress = productList
-                .stream() // Chuyển đổi Page thành Stream
-                .filter(product -> product.getUser().getAddress().contains(address)) // Lọc theo address
-                .collect(Collectors.toList()); // Chuyển đổi Stream thành List
-        return new PageImpl<>(byAddress,pageable,productList.size());
-    }
-    public Page<Product> getProductListingByAddress(int page,String address, String sort){
-        Pageable pageable = PageRequest.of(page,30, Sort.by(sort));
-        List<Product> products = productRepository.findAll()
-                .stream()
-                .filter(product -> product.getUser().getAddress().contains(address)) // Lọc theo address
-                .collect(Collectors.toList());
-        return new PageImpl<>(products,pageable,products.size());
-    }
+
+
 
     public void deleteProduct(String productId){
         productRepository.deleteById(productId);
