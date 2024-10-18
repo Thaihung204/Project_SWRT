@@ -42,8 +42,9 @@ public class CategoryService {
         // Upload new images and update the CategoryImage list
         category.setTitle(request.getTitle());
         category.setDescription(request.getDescription());
-        category.setImage(cloudinaryService.upload(request.getImage()));
-
+        if(request.getImage() != null){
+            category.setImage(cloudinaryService.upload(request.getImage()));
+        }
         return categoryRepository.save(category);
     }
 

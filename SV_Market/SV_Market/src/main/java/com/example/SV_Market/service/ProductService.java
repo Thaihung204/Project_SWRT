@@ -4,12 +4,14 @@ import com.example.SV_Market.entity.Category;
 import com.example.SV_Market.entity.Product;
 import com.example.SV_Market.entity.ProductImage;
 import com.example.SV_Market.entity.User;
+import com.example.SV_Market.repository.CategoryRepository;
 import com.example.SV_Market.repository.ProductRepository;
 import com.example.SV_Market.request.ProductCreationRequest;
 import com.example.SV_Market.request.ProductUpdateRequest;
 import com.example.SV_Market.response.*;
 import com.example.SV_Market.request.SensorProductRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -17,11 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 @Service
 public class ProductService {
-
+    @Autowired
+    CategoryRepository categoryRepository;
     @Autowired
     ProductRepository productRepository;
     @Autowired
@@ -114,6 +118,31 @@ public class ProductService {
         product.setStatus(request.getStatus());
         return productRepository.save(product);
     }
+
+    public Page<Product> getProductListing(
+            int page, String sort, String categoryId, String address, String name) {
+
+        Pageable pageable = PageRequest.of(page, 30, Sort.by(sort));
+        Stream<Product> productsStream = productRepository.findAll().stream();
+
+        if (categoryId != null) {
+            productsStream = productsStream
+                    .filter(product -> product.getCategory().getCategoryId().equals(categoryId));
+        }
+        if (address != null) {
+            productsStream = productsStream
+                    .filter(product -> product.getUser().getAddress().contains(address));
+        }
+        if (name != null) {
+            productsStream = productsStream
+                    .filter(product -> product.getProductName().contains(name));
+        }
+
+        List<Product> filteredProducts = productsStream.collect(Collectors.toList());
+        return new PageImpl<>(filteredProducts, pageable, filteredProducts.size());
+    }
+
+
 
     public void deleteProduct(String productId){
         productRepository.deleteById(productId);

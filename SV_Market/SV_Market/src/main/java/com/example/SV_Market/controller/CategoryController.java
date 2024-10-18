@@ -19,8 +19,8 @@ public class CategoryController {
 
 
     @PostMapping()
-    public Category createCategory(@RequestPart("request") CategoryCreationRequest request,
-                                   @RequestPart("images") MultipartFile[] images) {
+    public Category createCategory(@ModelAttribute("request") CategoryCreationRequest request,
+                                   @ModelAttribute("images") MultipartFile[] images) {
         return categoryService.createCategory(request);
     }
 
@@ -36,8 +36,8 @@ public class CategoryController {
 
     @PutMapping("/{categoryId}")
     public Category updateCategory(@PathVariable String categoryId,
-                                   @RequestPart("request") CategoryUpdateRequest request,
-                                   @RequestPart("images") MultipartFile[] newImages) {
+                                   @ModelAttribute("request") CategoryUpdateRequest request,
+                                   @ModelAttribute("images") MultipartFile[] newImages) {
         return categoryService.updateCategory(categoryId, request);
     }
 

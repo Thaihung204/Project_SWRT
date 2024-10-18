@@ -73,5 +73,17 @@ public class ReportService {
         }).collect(Collectors.toList());
     }
 
+
+    public Report answerReport(String reportId, String responseMessage) {
+        Report report = reportRepository.findById(reportId)
+                .orElseThrow(() -> new RuntimeException("Report not found with id: " + reportId));
+
+        report.setState("Completed");
+        report.setResponseMessage(responseMessage);
+
+        return reportRepository.save(report);
+    }
+
+
 }
 

@@ -110,7 +110,9 @@ public User getUserById(String userId) {
         user.setAddress(request.getAddress());
         user.setPhoneNum(request.getPhoneNum());
         user.setAddress(request.getAddress());
-        user.setProfilePicture(cloudinaryService.upload(request.getAvatar()));
+        if(!request.getAvatar().isEmpty()) {
+            user.setProfilePicture(cloudinaryService.upload(request.getAvatar()));
+        }
         userRepository.save(user);
         return user;
     }
