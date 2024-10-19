@@ -120,9 +120,15 @@ public class ProductService {
     }
 
     public Page<Product> getProductListing(
-            int page, String sort, String categoryId, String address, String name) {
+            int page, String sort, String categoryId, String address, String name, Boolean isDes) {
+        Sort sortOrder = Sort.unsorted();  // Giá trị mặc định là không sắp xếp.
+        if (sort != null && !sort.isEmpty()) {
+            sortOrder = Boolean.TRUE.equals(isDes)
+                    ? Sort.by(sort).descending()
+                    : Sort.by(sort).ascending();
+        }
 
-        Pageable pageable = PageRequest.of(page, 30, Sort.by(sort));
+        Pageable pageable = PageRequest.of(page, 30, sortOrder);
         Stream<Product> productsStream = productRepository.findAll().stream();
 
         if (categoryId != null) {
