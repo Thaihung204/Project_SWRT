@@ -51,8 +51,8 @@ public class ProductController {
     @GetMapping("/listing")
     ResponseEntity<?> getProductListing(
             @RequestParam("page") int page,
-            @RequestParam("sort") String sort,
-            @RequestParam("des") Boolean desc,
+            @RequestParam(value = "sort", required = false) String sort,
+            @RequestParam(value = "des", required = false) Boolean desc,
             @RequestParam(value = "category", required = false) String category,
             @RequestParam(value = "address", required = false) String address,
             @RequestParam(value = "productName", required = false) String name) {
