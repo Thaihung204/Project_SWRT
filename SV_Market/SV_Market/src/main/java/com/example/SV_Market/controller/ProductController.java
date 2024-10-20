@@ -57,7 +57,7 @@ public class ProductController {
             @RequestParam(value = "address", required = false) String address,
             @RequestParam(value = "productName", required = false) String name) {
         return ResponseEntity.status(HttpStatus.OK).body(
-                productService.getProductListing(page, sort, category, address, name,desc));
+                productService.getProductListing(page, sort, category, address, name, desc));
     }
     // Get a product by ID
     @GetMapping("/{productId}")

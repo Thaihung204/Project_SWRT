@@ -45,4 +45,4 @@ public class MessageController {
         User receiver = userService.getUserById(receiverId);
         return messageService.getMessagesBetweenUsers(senderId, receiverId);
     }
-}git
+}
