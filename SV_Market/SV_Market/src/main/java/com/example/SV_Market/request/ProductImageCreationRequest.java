@@ -1,27 +1,18 @@
 package com.example.SV_Market.request;
 
 import com.example.SV_Market.entity.ProductImage;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class ProductImageCreationRequest {
-    private List<ProductImage> images;
     private String productId;
-    private String path;
-
-    public String getProductId() {
-        return productId;
-    }
-
-    public void setProductId(String productId) {
-        this.productId = productId;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
+    protected MultipartFile image;
 }
