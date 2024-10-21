@@ -118,7 +118,7 @@ public class ProductService {
     }
 
     public Page<ProductResponse> getProductListing(
-            int page, String sort, String categoryId, String address, String name, Boolean isDes) {
+            int page, String sort, String categoryId, String address, String productName, Boolean isDes) {
         Sort sortOrder = Sort.unsorted();  // Giá trị mặc định là không sắp xếp.
         if (sort != null && !sort.isEmpty()) {
             sortOrder = Boolean.TRUE.equals(isDes)
@@ -137,9 +137,9 @@ public class ProductService {
             productsStream = productsStream
                     .filter(product -> product.getUser().getAddress().contains(address));
         }
-        if (name != null) {
+        if (productName != null) {
             productsStream = productsStream
-                    .filter(product -> product.getProductName().contains(name));
+                    .filter(product -> product.getProductName().contains(productName));
         }
         List<Product> filteredProducts = productsStream
                 .filter(product -> product.getStatus().equals("public"))
