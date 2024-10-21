@@ -119,7 +119,7 @@ public class ProductService {
     }
 
     public Page<ProductResponse> getProductListing(
-            int page,String sortType, String categoryId, String address, String productName) {
+            int page,String sortType, String categoryId, String address, String productName, Double minPrice, Double maxPrice) {
         Sort sortOrder = Sort.unsorted();  // Giá trị mặc định là không sắp xếp.
         if ("desc".equalsIgnoreCase(sortType)) {
             sortOrder = Sort.by("price").descending();
@@ -137,6 +137,14 @@ public class ProductService {
         if (address != null) {
             productsStream = productsStream
                     .filter(product -> product.getUser().getAddress().contains(address));
+        }
+        if (minPrice != null) {
+            productsStream = productsStream
+                    .filter(product -> product.getPrice() >= minPrice);
+        }
+        if (maxPrice != null) {
+            productsStream = productsStream
+                    .filter(product -> product.getPrice() <= maxPrice);
         }
         if (productName != null) {
             productsStream = productsStream
