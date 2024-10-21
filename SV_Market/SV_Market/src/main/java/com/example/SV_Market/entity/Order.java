@@ -46,6 +46,8 @@ public class Order {
     @Column(name = "state", nullable = false)
     private String state;
 
+    private String total;
+
     @Column(name = "create_at", nullable = false)
     private LocalDate createAt;
 
