@@ -52,6 +52,7 @@ public class OrderService {
             order.setBuyer(userService.getUserById(request.getBuyerId()));
             order.setType(request.getType());
             order.setState("pending");
+            order.setTotal(request.getTotal());
             order.setPaymentBy(request.getPaymentBy());
             order.setCreateAt(currentDate);
 
