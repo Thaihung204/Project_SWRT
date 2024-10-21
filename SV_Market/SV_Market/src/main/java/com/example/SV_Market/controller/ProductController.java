@@ -53,6 +53,8 @@ public class ProductController {
             @RequestParam("page") int page,
             @RequestParam(value = "sortType", required = false) String sortType,
             @RequestParam(value = "category", required = false) String category,
+            @RequestParam(value = "minPrice", required = false) Double minPrice,
+            @RequestParam(value = "maxPrice", required = false) Double maxPrice,
             @RequestParam(value = "address", required = false) String address,
             @RequestParam(value = "productName", required = false) String productName) {
         if ("null".equals(sortType)) {
@@ -68,7 +70,7 @@ public class ProductController {
             productName = null;
         }
         return ResponseEntity.status(HttpStatus.OK).body(
-                productService.getProductListing(page, sortType, category, address, productName));
+                productService.getProductListing(page, sortType, category, address, productName, minPrice,maxPrice));
     }
     // Get a product by ID
     @GetMapping("/{productId}")
