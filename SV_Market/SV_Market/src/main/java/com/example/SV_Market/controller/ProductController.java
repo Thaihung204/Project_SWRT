@@ -51,17 +51,13 @@ public class ProductController {
     @GetMapping("/listing")
     ResponseEntity<?> getProductListing(
             @RequestParam("page") int page,
-            @RequestParam(value = "sort", required = false) String sort,
-            @RequestParam(value = "des", required = false) Boolean desc,
+            @RequestParam(value = "sortType", required = false) String sortType,
             @RequestParam(value = "category", required = false) String category,
             @RequestParam(value = "address", required = false) String address,
             @RequestParam(value = "productName", required = false) String productName) {
-        if ("null".equals(sort)) {
-            sort = null;
+        if ("null".equals(sortType)) {
+            sortType = null;
         }
-//        if("false".equals(desc)){
-//            desc = false;
-//        }
         if ("null".equals(category)) {
             category = null;
         }
@@ -72,7 +68,7 @@ public class ProductController {
             productName = null;
         }
         return ResponseEntity.status(HttpStatus.OK).body(
-                productService.getProductListing(page, sort, category, address, productName, desc));
+                productService.getProductListing(page, sortType, category, address, productName));
     }
     // Get a product by ID
     @GetMapping("/{productId}")
