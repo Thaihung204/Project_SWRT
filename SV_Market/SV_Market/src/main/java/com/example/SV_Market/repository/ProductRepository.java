@@ -26,7 +26,7 @@ public interface ProductRepository extends JpaRepository<Product, String> {
 
     //for admin to get product to kiem duyet
     @Query("SELECT u FROM Product u WHERE u.status = :status")
-    Optional<Product> sensor(String status);
+    List<Product> sensor(String status);
 
     //de hien thi tren trang home
     List<Product> findByStatus(String tatus);
