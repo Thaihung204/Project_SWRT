@@ -118,12 +118,12 @@ public class ProductService {
     }
 
     public Page<ProductResponse> getProductListing(
-            int page, String sort, String categoryId, String address, String productName, Boolean isDes) {
+            int page,String sortType, String categoryId, String address, String productName) {
         Sort sortOrder = Sort.unsorted();  // Giá trị mặc định là không sắp xếp.
-        if (sort != null && !sort.isEmpty()) {
-            sortOrder = Boolean.TRUE.equals(isDes)
-                    ? Sort.by(sort).descending()
-                    : Sort.by(sort).ascending();
+        if (sortOrder.equals("des")) {
+            sortOrder = Sort.by("price").descending();
+        } else {
+            sortOrder = Sort.by("price").ascending();
         }
 
         Pageable pageable = PageRequest.of(page -1, 30, sortOrder);
