@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -120,13 +121,13 @@ public class ProductService {
     public Page<ProductResponse> getProductListing(
             int page,String sortType, String categoryId, String address, String productName) {
         Sort sortOrder = Sort.unsorted();  // Giá trị mặc định là không sắp xếp.
-        if (sortOrder.equals("des")) {
+        if ("desc".equalsIgnoreCase(sortType)) {
             sortOrder = Sort.by("price").descending();
         } else {
             sortOrder = Sort.by("price").ascending();
         }
 
-        Pageable pageable = PageRequest.of(page -1, 30, sortOrder);
+        Pageable pageable = PageRequest.of(page -1, 30);
         Stream<Product> productsStream = productRepository.findAll().stream();
 
         if (categoryId != null) {
@@ -144,6 +145,14 @@ public class ProductService {
         List<Product> filteredProducts = productsStream
                 .filter(product -> product.getStatus().equals("public"))
                 .collect(Collectors.toList());
+
+        if (sortOrder.isSorted()) {
+            Comparator<Product> comparator = Comparator.comparing(Product::getPrice);
+            if (sortOrder.getOrderFor("price").isDescending()) {
+                comparator = comparator.reversed();
+            }
+            filteredProducts.sort(comparator);
+        }
 
         long totalElements = filteredProducts.size();
 //        log.info("Total elements = " + totalElements);
