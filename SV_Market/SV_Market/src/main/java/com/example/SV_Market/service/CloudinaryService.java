@@ -14,6 +14,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CloudinaryService {
     private final Cloudinary cloudinary;
+
     public String upload(MultipartFile file)  {
         try{
             Map data = this.cloudinary.uploader().upload(file.getBytes(), Map.of());
