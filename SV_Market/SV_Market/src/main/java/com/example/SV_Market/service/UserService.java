@@ -136,7 +136,7 @@ public User getUserById(String userId) {
             user.setRole(subscriptionPackage.getRoleName());
             Upgrade upgrade = new Upgrade();
             upgrade.setUser(user);
-            upgrade.setType(subscriptionPackage.getPackageName());
+
             upgrade.setStartDate(LocalDate.now());
             upgrade.setEndDate(LocalDate.now().plusMonths(1));
 
