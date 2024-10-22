@@ -84,7 +84,14 @@ public class ProductService {
 
     }
     public List<ProductResponse> getPublicProductsByUserId(String userId, String status) {
-        return formatListProductResponse(productRepository.findProductsByUserIdAndStatus(userId, status));
+        List<Product> list;
+        if(status.equals("pending")){
+            list = productRepository.findProductsByUserIdAndStatus(userId,status);
+            list.addAll(productRepository.findProductsByUserIdAndStatus(userId,"rejected"));
+            return formatListProductResponse(list);
+        } else {
+            return formatListProductResponse(productRepository.findProductsByUserIdAndStatus(userId, status));
+        }
     }
 
 
@@ -263,15 +270,16 @@ public class ProductService {
             response.setPrice(product.getPrice());
             response.setDescription(product.getDescription());
 
-//            Category category = product.getCategory();
-//            CategoryResponse categoryResponse = new CategoryResponse();
-//            categoryResponse.setTitle(category.getTitle());
+            Category category = product.getCategory();
+            CategoryResponse categoryResponse = new CategoryResponse();
+            categoryResponse.setTitle(category.getTitle());
 //            categoryResponse.setDescription(category.getDescription());
 //            categoryResponse.setImage(category.getImage());
-//            response.setCategory(categoryResponse);
+            response.setCategory(categoryResponse);
 
 //            response.setType(product.getType());
 //            response.setState(product.getState());
+            response.setStatus(product.getStatus());
             response.setCreate_at(product.getCreate_at());
 
 //            List<FeedbackResponse> feedbackResponses = product.getFeedBacks().stream().map(feedback -> {

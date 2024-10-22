@@ -2,6 +2,7 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Project_SWRT" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/SV_Market/SV_Market/src/main/java/com/example/SV_Market/service/LAZUNI" vcs="Git" />
   </component>
 </project>
