@@ -157,7 +157,6 @@ public User getUserById(String userId) {
             Upgrade upgrade = new Upgrade();
             //nang cap goi moi giong goi cu
             if (user.getRole().equals(subscriptionPackage.getRoleName()) ){
-                Pageable pageable = PageRequest.of(0, 1);
                 Optional<Upgrade> latestUpgrade = upgradeRepository.findLatestByUserID(user.getUserId());
                 upgrade = latestUpgrade.get();
                 //dem so ngay da dung

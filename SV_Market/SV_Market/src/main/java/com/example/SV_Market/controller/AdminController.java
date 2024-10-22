@@ -51,13 +51,6 @@ public class AdminController {
         List<User> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
     }
-
-    //ban user
-    @PutMapping("/user")
-    public ResponseEntity<?> banUser(@RequestParam(value = "userId") String userId) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.banUser(userId));
-    }
-
      private ReportService reportService;
 
 //   @GetMapping()
