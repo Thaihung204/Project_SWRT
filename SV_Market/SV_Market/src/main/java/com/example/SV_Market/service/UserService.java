@@ -2,26 +2,32 @@ package com.example.SV_Market.service;
 
 import com.example.SV_Market.dto.UserDto;
 import com.example.SV_Market.dto.UserUpdateRequest;
+import com.example.SV_Market.entity.Product;
 import com.example.SV_Market.entity.BalanceFluctuation;
 import com.example.SV_Market.entity.SubscriptionPackage;
 import com.example.SV_Market.entity.Upgrade;
 import com.example.SV_Market.entity.User;
 
+import com.example.SV_Market.repository.ProductRepository;
 import com.example.SV_Market.repository.PaymentRepository;
 import com.example.SV_Market.repository.SubscriptionPackageRepository;
 import com.example.SV_Market.repository.UpgradeRepository;
 import com.example.SV_Market.repository.UserRepository;
 import com.example.SV_Market.request.UpgradeRequest;
 import com.example.SV_Market.response.UserResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+@Slf4j
 @Service
 public class UserService {
 
@@ -33,6 +39,13 @@ public class UserService {
     private UpgradeRepository upgradeRepository;
     @Autowired
     private SubscriptionPackageRepository packageRepository;
+    private final ProductService productService;
+    @Autowired
+    public UserService(@Lazy ProductService productService) {
+        this.productService = productService;
+    }
+    @Autowired
+    private ProductRepository productRepository;
     @Autowired
     private PaymentRepository paymentRepository;
 
@@ -46,6 +59,7 @@ public class UserService {
         user.setEmail(request.getEmail());
         user.setRole("USER");  // Default role
         // Set optional fields
+        user.setState("active");
         user.setAddress(request.getAddress());
         user.setBalance(0.0);  // Default balance
         user.setCreatedAt(new Date());  // Set created_at date
@@ -57,13 +71,7 @@ public class UserService {
         return userRepository.findAll();
     }
 
-//    public Optional<User> getUserById(String userId) {
-//        return userRepository.findById(userId);
-//    }
-//    public User getUserById(String userId) {
-//        return userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User Not Found!"));
-//
-//    }
+
 public User getUserById(String userId) {
     return userRepository.findById(userId)
             .orElseThrow(() -> new RuntimeException("User with ID " + userId + " not found!"));
@@ -163,6 +171,18 @@ public User getUserById(String userId) {
             return userRepository.save(user);
         }
 
+    }
+
+    public User banUser(String userId){
+        User user = getUserById(userId);
+        user.setState("inactive");
+        Period a = Period.between(LocalDate.now(), LocalDate.now().plusMonths(1));
+        List<Product> products = productRepository.findAllByUserId(userId);
+        for (Product product : products) {
+            log.info(product.getProductName());
+            productService.updateProductStatus(product.getProductId(),"hidden");
+        }
+        return userRepository.save(user);
     }
 
     public UserResponse formatUser(User user){
