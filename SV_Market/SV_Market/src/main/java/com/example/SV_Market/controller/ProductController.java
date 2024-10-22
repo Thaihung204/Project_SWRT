@@ -51,12 +51,26 @@ public class ProductController {
     @GetMapping("/listing")
     ResponseEntity<?> getProductListing(
             @RequestParam("page") int page,
-            @RequestParam("sort") String sort,
+            @RequestParam(value = "sortType", required = false) String sortType,
             @RequestParam(value = "category", required = false) String category,
+            @RequestParam(value = "minPrice", required = false) Double minPrice,
+            @RequestParam(value = "maxPrice", required = false) Double maxPrice,
             @RequestParam(value = "address", required = false) String address,
-            @RequestParam(value = "productName", required = false) String name) {
+            @RequestParam(value = "productName", required = false) String productName) {
+        if ("null".equals(sortType)) {
+            sortType = null;
+        }
+        if ("null".equals(category)) {
+            category = null;
+        }
+        if ("null".equals(address)) {
+            address = null;
+        }
+        if ("null".equals(productName)) {
+            productName = null;
+        }
         return ResponseEntity.status(HttpStatus.OK).body(
-                productService.getProductListing(page, sort, category, address, name));
+                productService.getProductListing(page, sortType, category, address, productName, minPrice,maxPrice));
     }
     // Get a product by ID
     @GetMapping("/{productId}")

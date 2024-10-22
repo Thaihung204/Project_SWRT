@@ -12,18 +12,20 @@ import com.example.SV_Market.request.ProductCreationRequest;
 import com.example.SV_Market.request.ProductUpdateRequest;
 import com.example.SV_Market.response.*;
 import com.example.SV_Market.request.SensorProductRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-
+@Slf4j
 @Service
 public class ProductService {
     @Autowired
@@ -139,12 +141,10 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    public List<Product> sensorProduct() {
-        Optional<Product> list = productRepository.sensor("pending");
-        if (list.isPresent()) {
-            return list.stream().toList();
-        }
-        return null;
+    public List<ProductResponse> sensorProduct(){
+        List<Product> list = productRepository.sensor("pending");
+        return formatListProductResponse(list);
+
     }
 
     public Product acceptProduct(SensorProductRequest request) {
@@ -153,10 +153,16 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    public Page<Product> getProductListing(
-            int page, String sort, String categoryId, String address, String name) {
+    public Page<ProductResponse> getProductListing(
+            int page,String sortType, String categoryId, String address, String productName, Double minPrice, Double maxPrice) {
+        Sort sortOrder = Sort.unsorted();  // Giá trị mặc định là không sắp xếp.
+        if ("desc".equalsIgnoreCase(sortType)) {
+            sortOrder = Sort.by("price").descending();
+        } else {
+            sortOrder = Sort.by("price").ascending();
+        }
 
-        Pageable pageable = PageRequest.of(page, 30, Sort.by(sort));
+        Pageable pageable = PageRequest.of(page -1, 30);
         Stream<Product> productsStream = productRepository.findAll().stream();
 
         if (categoryId != null) {
@@ -167,13 +173,41 @@ public class ProductService {
             productsStream = productsStream
                     .filter(product -> product.getUser().getAddress().contains(address));
         }
-        if (name != null) {
+        if (minPrice != null) {
             productsStream = productsStream
-                    .filter(product -> product.getProductName().contains(name));
+                    .filter(product -> product.getPrice() >= minPrice);
+        }
+        if (maxPrice != null) {
+            productsStream = productsStream
+                    .filter(product -> product.getPrice() <= maxPrice);
+        }
+        if (productName != null) {
+            productsStream = productsStream
+                    .filter(product -> product.getProductName().contains(productName));
+        }
+        List<Product> filteredProducts = productsStream
+                .filter(product -> product.getStatus().equals("public"))
+                .collect(Collectors.toList());
+
+        if (sortOrder.isSorted()) {
+            Comparator<Product> comparator = Comparator.comparing(Product::getPrice);
+            if (sortOrder.getOrderFor("price").isDescending()) {
+                comparator = comparator.reversed();
+            }
+            filteredProducts.sort(comparator);
         }
 
-        List<Product> filteredProducts = productsStream.collect(Collectors.toList());
-        return new PageImpl<>(filteredProducts, pageable, filteredProducts.size());
+        long totalElements = filteredProducts.size();
+//        log.info("Total elements = " + totalElements);
+
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), filteredProducts.size());
+//        log.info("start = " + start + ", end = " + end);
+        List<ProductResponse> pageProducts = formatListProductResponse(filteredProducts.subList(start, end));
+
+//        log.info("list pro: " + pageProducts.size());
+//
+        return new PageImpl<>(pageProducts, pageable, totalElements);
     }
 
 
