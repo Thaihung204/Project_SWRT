@@ -59,7 +59,9 @@
         @JsonIgnore
         private List<Product> products;
 
-
+        @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+        @JsonIgnore
+        private List<Notice> notices;
 
 //        private boolean accountVerified;
 //        private boolean loginDisabled;
