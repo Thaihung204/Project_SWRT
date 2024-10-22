@@ -4,8 +4,10 @@ import com.example.SV_Market.entity.Category;
 import com.example.SV_Market.entity.Product;
 import com.example.SV_Market.entity.ProductImage;
 import com.example.SV_Market.entity.User;
+import com.example.SV_Market.entity.Upgrade;
 import com.example.SV_Market.repository.CategoryRepository;
 import com.example.SV_Market.repository.ProductRepository;
+import com.example.SV_Market.repository.UpgradeRepository;
 import com.example.SV_Market.request.ProductCreationRequest;
 import com.example.SV_Market.request.ProductUpdateRequest;
 import com.example.SV_Market.response.*;
@@ -30,20 +32,50 @@ public class ProductService {
     CategoryRepository categoryRepository;
     @Autowired
     ProductRepository productRepository;
+
+    @Autowired
+    private UpgradeRepository upgradeRepository;
+
     @Autowired
     UserService userService;
     @Autowired
     CategoryService categoryService;
     @Autowired
     CloudinaryService cloudinaryService;
-    public Product createProduct(ProductCreationRequest request){
+
+    public Product createProduct(ProductCreationRequest request) {
         LocalDate currentDate = LocalDate.now();
+
+        User user = userService.getUserById(request.getUserId());
+        // Lấy thông tin gói nâng cấp hiện tại của người dùng
+        // Get the current upgrade for the user
+        Upgrade currentUpgrade = upgradeRepository.findTopByUserOrderByStartDateDesc(user);
+
+        // Check if the user has a valid upgrade
+        if (currentUpgrade == null || currentUpgrade.getEndDate().isBefore(currentDate)) {
+            throw new RuntimeException("Your upgrade package has expired or is not valid.");
+        }
+
+        // Count the number of products created by the user this month
+        long productCountForMonth = productRepository.countProductsByUserAndCreateAtBetween(
+                user,
+                LocalDate.now().withDayOfMonth(1),
+                LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth())
+        );
+
+        // Determine the creation limit based on the user's current upgrade
+        int creationLimit = getProductCreationLimit(currentUpgrade);
+
+        // Check if the user has exceeded their product creation limit
+        if (productCountForMonth >= creationLimit) {
+            throw new RuntimeException("You have reached your product creation limit for this month.");
+        }
 
         Product product = new Product();
 
         List<ProductImage> productImages = new ArrayList<>();  // Create an empty list to store the ProductImage objects
 
-            for (String imagePath : cloudinaryService.uploadProductImage(request.getImages())) {  // Iterate over each image path from the request
+        for (String imagePath : cloudinaryService.uploadProductImage(request.getImages())) {  // Iterate over each image path from the request
             ProductImage productImage = new ProductImage();  // Create a new ProductImage object
             productImage.setPath(imagePath);  // Set the image path
             productImage.setProduct(product);  // Associate the image with the product
@@ -71,11 +103,11 @@ public class ProductService {
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
     }
 
-    public List <ProductResponse> getPublicProduct(String status) {
-        return  formatListProductResponse(productRepository.findByStatus(status));
+    public List<ProductResponse> getPublicProduct(String status) {
+        return formatListProductResponse(productRepository.findByStatus(status));
     }
 
-    public List<ProductResponse> getAllProducts(){
+    public List<ProductResponse> getAllProducts() {
         return formatListProductResponse(productRepository.findAll());
     }
 
@@ -83,12 +115,13 @@ public class ProductService {
         return formatListProductResponse(productRepository.findAll());
 
     }
+
     public List<ProductResponse> getPublicProductsByUserId(String userId, String status) {
         return formatListProductResponse(productRepository.findProductsByUserIdAndStatus(userId, status));
     }
 
 
-    public Product updateProduct(String productId, ProductUpdateRequest request){
+    public Product updateProduct(String productId, ProductUpdateRequest request) {
         Product product = getProductById(productId);
         LocalDate currentDate = LocalDate.now();
         product.setProductName(request.getProductName());
@@ -101,7 +134,8 @@ public class ProductService {
         product.setCreate_at(currentDate);
         return productRepository.save(product);
     }
-    public Product updateProductStatus(String productId, String status){
+
+    public Product updateProductStatus(String productId, String status) {
         Product product = getProductById(productId);
         product.setStatus(status);
         return productRepository.save(product);
@@ -110,6 +144,7 @@ public class ProductService {
     public List<ProductResponse> sensorProduct(){
         List<Product> list = productRepository.sensor("pending");
         return formatListProductResponse(list);
+
     }
 
     public Product acceptProduct(SensorProductRequest request) {
@@ -176,69 +211,68 @@ public class ProductService {
     }
 
 
-
-    public void deleteProduct(String productId){
+    public void deleteProduct(String productId) {
         productRepository.deleteById(productId);
     }
 
-    public ProductResponse formatProductResponse(Product product){
+    public ProductResponse formatProductResponse(Product product) {
 
-            ProductResponse response = new ProductResponse();
-            response.setProductId(product.getProductId());
-            response.setProductName(product.getProductName());
+        ProductResponse response = new ProductResponse();
+        response.setProductId(product.getProductId());
+        response.setProductName(product.getProductName());
 
-            User user = product.getUser();
-            UserResponse userResponse = new UserResponse();
+        User user = product.getUser();
+        UserResponse userResponse = new UserResponse();
         userResponse.setUserId(user.getUserId());
-            userResponse.setUserName(user.getUserName());
-            userResponse.setAddress(user.getAddress());
-            userResponse.setProfilePicture(user.getProfilePicture());
+        userResponse.setUserName(user.getUserName());
+        userResponse.setAddress(user.getAddress());
+        userResponse.setProfilePicture(user.getProfilePicture());
 
-            response.setUser(userResponse);
+        response.setUser(userResponse);
 
-            List<ProductImageResponse> imageResponses = product.getImages().stream().map(image -> {
-                ProductImageResponse imageResponse = new ProductImageResponse();
-                imageResponse.setPath(image.getPath());
-                return imageResponse;
-            }).collect(Collectors.toList());
+        List<ProductImageResponse> imageResponses = product.getImages().stream().map(image -> {
+            ProductImageResponse imageResponse = new ProductImageResponse();
+            imageResponse.setPath(image.getPath());
+            return imageResponse;
+        }).collect(Collectors.toList());
 
-            response.setImages(imageResponses);
-            response.setQuantity(product.getQuantity());
-            response.setPrice(product.getPrice());
-            response.setDescription(product.getDescription());
+        response.setImages(imageResponses);
+        response.setQuantity(product.getQuantity());
+        response.setPrice(product.getPrice());
+        response.setDescription(product.getDescription());
 
-            Category category = product.getCategory();
-            CategoryResponse categoryResponse = new CategoryResponse();
-            categoryResponse.setTitle(category.getTitle());
-            categoryResponse.setDescription(category.getDescription());
-            categoryResponse.setImage(category.getImage());
+        Category category = product.getCategory();
+        CategoryResponse categoryResponse = new CategoryResponse();
+        categoryResponse.setTitle(category.getTitle());
+        categoryResponse.setDescription(category.getDescription());
+        categoryResponse.setImage(category.getImage());
 
-            response.setCategory(categoryResponse);
-            response.setType(product.getType());
-            response.setState(product.getState());
-            response.setCreate_at(product.getCreate_at());
+        response.setCategory(categoryResponse);
+        response.setType(product.getType());
+        response.setState(product.getState());
+        response.setCreate_at(product.getCreate_at());
 
-            List<FeedbackResponse> feedbackResponses = product.getFeedBacks().stream().map(feedback -> {
-                FeedbackResponse feedbackResponse = new FeedbackResponse();
+        List<FeedbackResponse> feedbackResponses = product.getFeedBacks().stream().map(feedback -> {
+            FeedbackResponse feedbackResponse = new FeedbackResponse();
 
-                User fuser = feedback.getSender();
-                UserResponse fuserResponse = new UserResponse();
-                fuserResponse.setUserName(fuser.getUserName());
-                fuserResponse.setProfilePicture(fuser.getProfilePicture());
-                feedbackResponse.setSender(fuserResponse);
-                feedbackResponse.setRating(feedback.getRating());
-                feedbackResponse.setDescription(feedback.getDescription());
-                feedbackResponse.setCreatedAt(feedback.getCreatedAt());
-                
-                return feedbackResponse;
-            }).collect(Collectors.toList());
-            response.setFeedBacks(feedbackResponses);
+            User fuser = feedback.getSender();
+            UserResponse fuserResponse = new UserResponse();
+            fuserResponse.setUserName(fuser.getUserName());
+            fuserResponse.setProfilePicture(fuser.getProfilePicture());
+            feedbackResponse.setSender(fuserResponse);
+            feedbackResponse.setRating(feedback.getRating());
+            feedbackResponse.setDescription(feedback.getDescription());
+            feedbackResponse.setCreatedAt(feedback.getCreatedAt());
 
-            return response;
+            return feedbackResponse;
+        }).collect(Collectors.toList());
+        response.setFeedBacks(feedbackResponses);
+
+        return response;
 
     }
 
-    public List<ProductResponse> formatListProductResponse(List<Product> products){
+    public List<ProductResponse> formatListProductResponse(List<Product> products) {
         return products.stream().map(product -> {
             ProductResponse response = new ProductResponse();
             response.setProductId(product.getProductId());
@@ -294,23 +328,36 @@ public class ProductService {
         }).collect(Collectors.toList());
     }
 
-    public ProductResponse formatProductOrderResponse(Product product){
+    public ProductResponse formatProductOrderResponse(Product product) {
 
-            ProductResponse response = new ProductResponse();
-            response.setProductId(product.getProductId());
-            response.setProductName(product.getProductName());
+        ProductResponse response = new ProductResponse();
+        response.setProductId(product.getProductId());
+        response.setProductName(product.getProductName());
 
-            List<ProductImageResponse> imageResponses = product.getImages().stream().map(image -> {
-                ProductImageResponse imageResponse = new ProductImageResponse();
-                imageResponse.setPath(image.getPath());
-                return imageResponse;
-            }).collect(Collectors.toList());
-            response.setImages(imageResponses);
-            response.setQuantity(product.getQuantity());
-            response.setPrice(product.getPrice());
-            response.setDescription(product.getDescription());
-            response.setCreate_at(product.getCreate_at());
-            return response;
+        List<ProductImageResponse> imageResponses = product.getImages().stream().map(image -> {
+            ProductImageResponse imageResponse = new ProductImageResponse();
+            imageResponse.setPath(image.getPath());
+            return imageResponse;
+        }).collect(Collectors.toList());
+        response.setImages(imageResponses);
+        response.setQuantity(product.getQuantity());
+        response.setPrice(product.getPrice());
+        response.setDescription(product.getDescription());
+        response.setCreate_at(product.getCreate_at());
+        return response;
 
+    }
+
+    private int getProductCreationLimit(Upgrade currentUpgrade) {
+        String packageType = currentUpgrade.getType(); // Assuming the type corresponds to the package name
+        switch (packageType) {
+            case "business":
+                return 40; // Limit for business package
+            case "sub-business":
+                return 10; // Limit for sub-business package
+            case "standard":
+            default:
+                return 5;  // Limit for standard package
+        }
     }
 }
