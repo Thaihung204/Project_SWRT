@@ -12,6 +12,7 @@ import com.example.SV_Market.response.*;
 import com.example.SV_Market.request.SensorProductRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
@@ -30,8 +31,11 @@ public class ProductService {
     CategoryRepository categoryRepository;
     @Autowired
     ProductRepository productRepository;
+    private final UserService userService;
     @Autowired
-    UserService userService;
+    public ProductService(@Lazy UserService userService) {
+        this.userService = userService;
+    }
     @Autowired
     CategoryService categoryService;
     @Autowired
