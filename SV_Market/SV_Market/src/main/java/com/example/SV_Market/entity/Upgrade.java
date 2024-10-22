@@ -1,6 +1,5 @@
 package com.example.SV_Market.entity;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,13 +25,13 @@ public class Upgrade {
     @JoinColumn(name = "userid", nullable = false, referencedColumnName = "userid")
     private User user;
 
-    @Column(name = "type", length = 50, nullable = false)
-    private String type;
+    @ManyToOne
+    @JoinColumn(name = "subscription_package_id", nullable = false, referencedColumnName = "id")
+    private SubscriptionPackage subscriptionPackage;
 
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
 
     @Column(name = "end_date")
     private LocalDate endDate;
-
 }

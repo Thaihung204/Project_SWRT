@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -118,15 +119,15 @@ public class ProductService {
     }
 
     public Page<ProductResponse> getProductListing(
-            int page, String sort, String categoryId, String address, String name, Boolean isDes) {
+            int page,String sortType, String categoryId, String address, String productName, Double minPrice, Double maxPrice) {
         Sort sortOrder = Sort.unsorted();  // Giá trị mặc định là không sắp xếp.
-        if (sort != null && !sort.isEmpty()) {
-            sortOrder = Boolean.TRUE.equals(isDes)
-                    ? Sort.by(sort).descending()
-                    : Sort.by(sort).ascending();
+        if ("desc".equalsIgnoreCase(sortType)) {
+            sortOrder = Sort.by("price").descending();
+        } else {
+            sortOrder = Sort.by("price").ascending();
         }
 
-        Pageable pageable = PageRequest.of(page -1, 30, sortOrder);
+        Pageable pageable = PageRequest.of(page -1, 30);
         Stream<Product> productsStream = productRepository.findAll().stream();
 
         if (categoryId != null) {
@@ -137,13 +138,29 @@ public class ProductService {
             productsStream = productsStream
                     .filter(product -> product.getUser().getAddress().contains(address));
         }
-        if (name != null) {
+        if (minPrice != null) {
             productsStream = productsStream
-                    .filter(product -> product.getProductName().contains(name));
+                    .filter(product -> product.getPrice() >= minPrice);
+        }
+        if (maxPrice != null) {
+            productsStream = productsStream
+                    .filter(product -> product.getPrice() <= maxPrice);
+        }
+        if (productName != null) {
+            productsStream = productsStream
+                    .filter(product -> product.getProductName().contains(productName));
         }
         List<Product> filteredProducts = productsStream
                 .filter(product -> product.getStatus().equals("public"))
                 .collect(Collectors.toList());
+
+        if (sortOrder.isSorted()) {
+            Comparator<Product> comparator = Comparator.comparing(Product::getPrice);
+            if (sortOrder.getOrderFor("price").isDescending()) {
+                comparator = comparator.reversed();
+            }
+            filteredProducts.sort(comparator);
+        }
 
         long totalElements = filteredProducts.size();
 //        log.info("Total elements = " + totalElements);
