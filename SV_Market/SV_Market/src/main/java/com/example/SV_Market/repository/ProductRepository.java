@@ -13,6 +13,7 @@ import org.springframework.data.repository.query.Param;
 
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,4 +40,12 @@ public interface ProductRepository extends JpaRepository<Product, String> {
 
     @Query("SELECT e FROM Product e")
     Page<Product> productListing(Pageable pageable);
+
+    @Query("SELECT COUNT(p) FROM Product p WHERE p.user.id = :userId AND p.create_at >= :startDate")
+    int countProductsCreatedByUserSinceDate(@Param("userId") Long userId, @Param("startDate") LocalDate startDate);
+
+    @Query("SELECT COUNT(p) FROM Product p WHERE p.user = :user AND p.createAt BETWEEN :startDate AND :endDate")
+    long countProductsByUserAndCreateAtBetween(@Param("user") User user,
+                                               @Param("startDate") LocalDate startDate,
+                                               @Param("endDate") LocalDate endDate);
 }

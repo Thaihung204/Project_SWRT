@@ -4,12 +4,14 @@ import com.example.SV_Market.dto.UserDto;
 import com.example.SV_Market.dto.UserUpdateRequest;
 import com.example.SV_Market.entity.BalanceFluctuation;
 import com.example.SV_Market.entity.Product;
+import com.example.SV_Market.entity.BalanceFluctuation;
 import com.example.SV_Market.entity.SubscriptionPackage;
 import com.example.SV_Market.entity.Upgrade;
 import com.example.SV_Market.entity.User;
 
 import com.example.SV_Market.repository.PaymentRepository;
 import com.example.SV_Market.repository.ProductRepository;
+import com.example.SV_Market.repository.PaymentRepository;
 import com.example.SV_Market.repository.SubscriptionPackageRepository;
 import com.example.SV_Market.repository.UpgradeRepository;
 import com.example.SV_Market.repository.UserRepository;
@@ -52,6 +54,9 @@ public class UserService {
     }
     @Autowired
     private ProductRepository productRepository;
+    @Autowired
+    private PaymentRepository paymentRepository;
+
     public User createUser(UserDto request) {
         User user = new User();
         // Combine firstName and lastName for userName
@@ -176,6 +181,17 @@ public User getUserById(String userId) {
             }
 
 
+
+            BalanceFluctuation balanceFluctuation = BalanceFluctuation.builder()
+                    .user(user)
+                    .transactionType("+")
+                    .amount(subscriptionPackage.getPrice())
+                    .balance(user.getBalance())
+                    .content(" Upgrade to " + subscriptionPackage.getPackageName() )
+                    .date(LocalDate.now())
+                    .state("Giao dịch thành công")
+                    .build();
+            paymentRepository.save(balanceFluctuation);
 
             BalanceFluctuation balanceFluctuation = BalanceFluctuation.builder()
                     .user(user)
