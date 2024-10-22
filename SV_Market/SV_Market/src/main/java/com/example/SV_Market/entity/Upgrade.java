@@ -17,9 +17,9 @@ import java.time.LocalDate;
 public class Upgrade {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "upgrade_id", length = 50)
-    private String upgradeId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "upgrade_id")
+    private long upgradeId;
 
     @ManyToOne
     @JoinColumn(name = "userid", nullable = false, referencedColumnName = "userid")

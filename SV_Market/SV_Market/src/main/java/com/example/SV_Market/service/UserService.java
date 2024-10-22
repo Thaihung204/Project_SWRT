@@ -2,21 +2,26 @@ package com.example.SV_Market.service;
 
 import com.example.SV_Market.dto.UserDto;
 import com.example.SV_Market.dto.UserUpdateRequest;
+import com.example.SV_Market.entity.BalanceFluctuation;
 import com.example.SV_Market.entity.SubscriptionPackage;
 import com.example.SV_Market.entity.Upgrade;
 import com.example.SV_Market.entity.User;
 
+import com.example.SV_Market.repository.PaymentRepository;
 import com.example.SV_Market.repository.SubscriptionPackageRepository;
 import com.example.SV_Market.repository.UpgradeRepository;
 import com.example.SV_Market.repository.UserRepository;
 import com.example.SV_Market.request.UpgradeRequest;
 import com.example.SV_Market.response.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +36,8 @@ public class UserService {
     private UpgradeRepository upgradeRepository;
     @Autowired
     private SubscriptionPackageRepository packageRepository;
+    @Autowired
+    private PaymentRepository paymentRepository;
 
     public User createUser(UserDto request) {
         User user = new User();
@@ -133,12 +140,40 @@ public User getUserById(String userId) {
 
         if (user.getBalance() >= subscriptionPackage.getPrice()) {
             user.setBalance(user.getBalance() - subscriptionPackage.getPrice());
-            user.setRole(subscriptionPackage.getRoleName());
             Upgrade upgrade = new Upgrade();
-            upgrade.setUser(user);
-            upgrade.setSubscriptionPackage(subscriptionPackage);
-            upgrade.setStartDate(LocalDate.now());
-            upgrade.setEndDate(LocalDate.now().plusMonths(1));
+            //nang cap goi moi giong goi cu
+            if (user.getRole().equals(subscriptionPackage.getRoleName()) ){
+                Pageable pageable = PageRequest.of(0, 1);
+                Optional<Upgrade> latestUpgrade = upgradeRepository.findLatestByUserID(user.getUserId());
+                upgrade = latestUpgrade.get();
+                //dem so ngay da dung
+                long daysUsed = ChronoUnit.DAYS.between(upgrade.getStartDate(), upgrade.getEndDate());
+
+                upgrade.setStartDate(LocalDate.now());
+                upgrade.setEndDate(LocalDate.now().plusMonths(1).plusDays(daysUsed));
+            } else {
+                //nang cap goi moi
+                user.setRole(subscriptionPackage.getRoleName());
+                upgrade.setUser(user);
+                upgrade.setSubscriptionPackage(subscriptionPackage);
+
+                upgrade.setStartDate(LocalDate.now());
+                upgrade.setEndDate(LocalDate.now().plusMonths(1));
+
+            }
+
+
+
+            BalanceFluctuation balanceFluctuation = BalanceFluctuation.builder()
+                    .user(user)
+                    .transactionType("+")
+                    .amount(subscriptionPackage.getPrice())
+                    .balance(user.getBalance())
+                    .content(" Upgrade to " + subscriptionPackage.getPackageName() )
+                    .date(LocalDate.now())
+                    .state("Giao dịch thành công")
+                    .build();
+            paymentRepository.save(balanceFluctuation);
 
             upgradeRepository.save(upgrade);
 
