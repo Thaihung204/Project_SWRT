@@ -53,9 +53,13 @@ public class AdminController {
     }
 
     //ban user
-    @PutMapping("/user")
+    @PutMapping("/banUser")
     public ResponseEntity<?> banUser(@RequestParam(value = "userId") String userId) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.banUser(userId));
+    }
+    @PutMapping("/unbanUser")
+    public ResponseEntity<?> unbanUser(@RequestParam(value = "userId") String userId) {
+        return ResponseEntity.status(HttpStatus.OK).body(userService.unbanUser(userId));
     }
 
      private ReportService reportService;
