@@ -10,11 +10,13 @@ import com.example.SV_Market.request.ProductCreationRequest;
 import com.example.SV_Market.request.ProductUpdateRequest;
 import com.example.SV_Market.response.*;
 import com.example.SV_Market.request.SensorProductRequest;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -36,7 +38,9 @@ public class ProductService {
     CategoryService categoryService;
     @Autowired
     CloudinaryService cloudinaryService;
-    public Product createProduct(ProductCreationRequest request){
+
+
+    public Product createProduct(ProductCreationRequest request) throws IOException {
         LocalDate currentDate = LocalDate.now();
 
         Product product = new Product();
@@ -80,10 +84,11 @@ public class ProductService {
     }
 
     public List<ProductResponse> getProducts() {
+
         return formatListProductResponse(productRepository.findAll());
 
     }
-    public List<ProductResponse> getPublicProductsByUserId(String userId, String status) {
+    public List<ProductResponse> getPublicProductsByUserId(String userId, String status) throws IOException {
         return formatListProductResponse(productRepository.findProductsByUserIdAndStatus(userId, status));
     }
 
@@ -118,6 +123,23 @@ public class ProductService {
         return productRepository.save(product);
     }
 
+    //hung viet de giam sl sp
+    public void decreaseProductQuan(String productId,int quan){
+        Product product = getProductById(productId);
+        if(product.getQuantity()<quan)
+            throw new RuntimeException("Product do not enought!");
+        else if (product.getQuantity()==quan) {
+            product.setQuantity(0);
+            product.setStatus("hide");
+            productRepository.save(product);
+        }
+        else {
+            int newQuan = product.getQuantity()-quan;
+            product.setQuantity(newQuan);
+            productRepository.save(product);
+        }
+
+    }
     public Page<ProductResponse> getProductListing(
             int page,String sortType, String categoryId, String address, String productName, Double minPrice, Double maxPrice) {
         Sort sortOrder = Sort.unsorted();  // Giá trị mặc định là không sắp xếp.
