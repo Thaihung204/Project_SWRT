@@ -230,9 +230,11 @@ public class ProductService {
 
                 User fuser = feedback.getSender();
                 UserResponse fuserResponse = new UserResponse();
+                fuserResponse.setUserId(fuser.getUserId());
                 fuserResponse.setUserName(fuser.getUserName());
                 fuserResponse.setProfilePicture(fuser.getProfilePicture());
                 feedbackResponse.setSender(fuserResponse);
+
                 feedbackResponse.setRating(feedback.getRating());
                 feedbackResponse.setDescription(feedback.getDescription());
                 feedbackResponse.setCreatedAt(feedback.getCreatedAt());
@@ -284,9 +286,10 @@ public class ProductService {
 
 //            List<FeedbackResponse> feedbackResponses = product.getFeedBacks().stream().map(feedback -> {
 //                FeedbackResponse feedbackResponse = new FeedbackResponse();
-//
+////
 //                User fuser = feedback.getSender();
 //                UserResponse fuserResponse = new UserResponse();
+//                fuserResponse.setUserId(fuser.getUserId());
 //                fuserResponse.setUserName(fuser.getUserName());
 //                fuserResponse.setProfilePicture(fuser.getProfilePicture());
 //                feedbackResponse.setSender(fuserResponse);
@@ -316,9 +319,10 @@ public class ProductService {
             response.setImages(imageResponses);
             response.setQuantity(product.getQuantity());
             response.setPrice(product.getPrice());
-            response.setDescription(product.getDescription());
-            response.setCreate_at(product.getCreate_at());
+
             return response;
 
     }
+
+
 }

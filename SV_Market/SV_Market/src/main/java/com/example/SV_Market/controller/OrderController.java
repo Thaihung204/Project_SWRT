@@ -45,7 +45,7 @@ public class OrderController {
         List<OrderResponse> orders = orderService.getOrderBySellerIdAndState(sellId,state);
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
-    @GetMapping("/make")
+        @GetMapping("/make")
     public ResponseEntity<List<OrderResponse>> getOrdersByBuyerIdAndState(
             @RequestParam(value = "buy_id", required = false) String buyId,
             @RequestParam(value = "state", required = false) String state) {
