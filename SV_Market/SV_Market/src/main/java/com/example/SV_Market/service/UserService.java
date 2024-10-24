@@ -172,7 +172,7 @@ public User getUserById(String userId) {
 
                 upgrade.setStartDate(LocalDate.now());
                 upgrade.setEndDate(LocalDate.now().plusMonths(1));
-
+//                log.info(upgrade.getStartDate()+" den " + upgrade.getEndDate());
             }
 
 
