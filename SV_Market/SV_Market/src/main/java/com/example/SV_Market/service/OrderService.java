@@ -131,6 +131,7 @@ public class OrderService {
             response.setPaymentBy(order.getPaymentBy());
             response.setTotal(order.getTotal());
             response.setCreateAt(order.getCreateAt());
+            response.setTotal(order.getTotal());
             return response;
         }).collect(Collectors.toList());
     }
@@ -157,6 +158,7 @@ public class OrderService {
             response.setPaymentBy(order.getPaymentBy());
             response.setTotal(order.getTotal());
             response.setCreateAt(order.getCreateAt());
+            response.setTotal(order.getTotal());
             return response;
 
     }

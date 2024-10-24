@@ -30,5 +30,6 @@ public class UserResponse {
     private String profilePicture;
     private String state;
     private Date createdAt;
+    private String senderId;
 //    private List<Product> products;
 }

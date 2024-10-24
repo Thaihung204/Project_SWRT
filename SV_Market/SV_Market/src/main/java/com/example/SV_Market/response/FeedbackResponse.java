@@ -18,6 +18,7 @@ public class FeedbackResponse {
 
     private UserResponse sender;
     private UserResponse receiver;
+
     private int rating;
     private String description;
     private LocalDate createdAt;

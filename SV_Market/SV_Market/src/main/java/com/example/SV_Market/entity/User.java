@@ -48,7 +48,7 @@
         @Column(name = "profilepicture", length = 255)  // Match profilePicture column
         private String profilePicture;
 
-        @Column(name = "state", length = 255)  // Match profilePicture column
+        @Column(name = "state", length = 255)  // active/inactive
         private String state;
 
         @Column(name = "created_at")
