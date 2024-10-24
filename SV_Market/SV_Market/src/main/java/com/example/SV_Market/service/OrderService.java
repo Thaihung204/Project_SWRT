@@ -29,6 +29,8 @@ public class OrderService {
     ProductService productService;
     @Autowired
     UserService userService ;
+    @Autowired
+    BalanceFluctuationService balanceFluctuationService;
 
     public String createOrder(List<OrderCreationRequest> requests){
 
@@ -80,34 +82,18 @@ public class OrderService {
     public Order updateOrder(String orderid, String state){
         Order order = getOrderById(orderid);
         order.setState(state);
-
+        // check order is recepted
         if(state.equals("shiping")) {
-//            productService.decreaseProductQuan("P01",1);
             for(OrderDetail o : order.getOrderDetails()){
                 productService.decreaseProductQuan(o.getProduct().getProductId(), o.getQuantity());
-
             }
-//
         }
+
+        //check user cancle order
+        if(state.equals("cancle")&&order.getPaymentBy().equals("lazuni"))
+            balanceFluctuationService.createBalanceFluctuation(order.getBuyer().getUserId(),"+",order.getTotal(),"Hoàn tiền giao dịch bị hủy");
         return orderRepository.save(order);
     }
-//    public Product updateProduct(String productId, ProductUpdateRequest request){
-//        Product product = getProduct(productId);
-//
-//        LocalDate currentDate = LocalDate.now();
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-//        String formattedDate = currentDate.format(formatter);
-//
-//        product.setProductName(request.getProductName());
-//        product.setQuantity(request.getQuantity());
-//        product.setPrice(request.getPrice());
-//        product.setDescription(request.getDescription());
-//        product.setCategoryId(request.getCategoryId());
-//        product.setState(request.getState());
-//        product.setCreate_at(currentDate);
-//
-//        return productRepository.save(product);
-//    }
 
     public List<OrderResponse> formatListOrder(List<Order> orders){
         return  orders.stream().map(order -> {

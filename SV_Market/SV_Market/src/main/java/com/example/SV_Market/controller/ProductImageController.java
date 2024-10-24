@@ -29,7 +29,6 @@ public class ProductImageController {
         return productImageService.createProductImage(request);
     }
 
-
     @DeleteMapping("/{imageId}")
     public String deleteProduct(@PathVariable String imageId){
         productImageService.deleteProductImage(imageId);
