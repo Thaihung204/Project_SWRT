@@ -24,7 +24,7 @@ public class BalanceFluctuation {
     @JsonIgnore
     private User user;
 
-    private String transactionType;
+    private String transactionType;  //plus/minus
     private double amount;
     private double balance;
     private String content;

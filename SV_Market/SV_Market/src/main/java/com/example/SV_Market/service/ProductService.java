@@ -88,10 +88,10 @@ public class ProductService {
         return formatListProductResponse(productRepository.findAll());
 
     }
+
     public List<ProductResponse> getPublicProductsByUserId(String userId, String status) throws IOException {
         return formatListProductResponse(productRepository.findProductsByUserIdAndStatus(userId, status));
     }
-
 
     public Product updateProduct(String productId, ProductUpdateRequest request){
         Product product = getProductById(productId);
@@ -106,8 +106,6 @@ public class ProductService {
         product.setCreate_at(currentDate);
         return productRepository.save(product);
     }
-    
-    
 
     public List<ProductResponse> sensorProduct(){
         List<Product> list = productRepository.sensor("pending");
@@ -246,6 +244,7 @@ public class ProductService {
 
                 User fuser = feedback.getSender();
                 UserResponse fuserResponse = new UserResponse();
+                fuserResponse.setUserId(fuser.getUserId());
                 fuserResponse.setUserName(fuser.getUserName());
                 fuserResponse.setProfilePicture(fuser.getProfilePicture());
                 feedbackResponse.setSender(fuserResponse);
