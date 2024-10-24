@@ -194,7 +194,11 @@ public class ProductService {
         return new PageImpl<>(pageProducts, pageable, totalElements);
     }
 
-
+    public Product updateProductStatus(String productId, String status) {
+        Product product = getProductById(productId);
+        product.setStatus(status);
+        return productRepository.save(product);
+    }
 
     public void deleteProduct(String productId){
         productRepository.deleteById(productId);
