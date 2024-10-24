@@ -107,7 +107,10 @@ public class ProductService {
         return productRepository.save(product);
     }
     public Product updateProductStatus(String productId, String status){
+
         Product product = getProductById(productId);
+        if(product.getQuantity()==0 && status.equals("public"))
+            throw new RuntimeException("Can not public product have quantity equal 0 !!");
         product.setStatus(status);
         return productRepository.save(product);
     }
