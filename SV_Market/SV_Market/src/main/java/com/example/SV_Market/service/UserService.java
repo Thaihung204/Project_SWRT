@@ -210,8 +210,21 @@ public User getUserById(String userId) {
         return userRepository.save(user);
     }
 
+    public User unbanUser(String userId){
+        User user = getUserById(userId);
+        user.setState("active");
+        Period a = Period.between(LocalDate.now(), LocalDate.now().plusMonths(1));
+        List<Product> products = productRepository.findAllByUserId(userId);
+        for (Product product : products) {
+            log.info(product.getProductName());
+            productService.updateProductStatus(product.getProductId(),"pending");
+        }
+        return userRepository.save(user);
+    }
+
     public UserResponse formatUser(User user){
         UserResponse userResponse = new UserResponse();
+        userResponse.setUserId(user.getUserId());
         userResponse.setUserName(user.getUserName());
         userResponse.setAddress(user.getAddress());
         userResponse.setProfilePicture(user.getProfilePicture());

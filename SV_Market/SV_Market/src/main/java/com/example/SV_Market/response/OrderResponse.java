@@ -29,4 +29,5 @@ public class OrderResponse {
     private String paymentBy;
     private String state;
     private LocalDate createAt;
+    private String total;
 }

@@ -44,17 +44,19 @@ public class OrderController {
             @RequestParam(value = "state", required = false) String state) {
         List<OrderResponse> orders = orderService.getOrderBySellerIdAndState(sellId,state);
         return new ResponseEntity<>(orders, HttpStatus.OK);
-    }
-    @GetMapping("/make")
-    public ResponseEntity<List<OrderResponse>> getOrdersByBuyerIdAndState(
+        }
+            @GetMapping("/make")
+        public ResponseEntity<List<OrderResponse>> getOrdersByBuyerIdAndState(
             @RequestParam(value = "buy_id", required = false) String buyId,
             @RequestParam(value = "state", required = false) String state) {
         List<OrderResponse> orders = orderService.getOrderByBuyerIdAndState(buyId,state);
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
-//    @PutMapping("/{productId}")
-//    Product updateProduct(@PathVariable String productId, @RequestBody ProductUpdateRequest request) {
-//        return productService.updateProduct(productId, request);
-//    }
+    @PutMapping()
+    public String updateorder( @RequestParam(value = "orderId", required = false) String orderId,
+                               @RequestParam(value = "state", required = false) String state){
+        orderService.updateOrder(orderId,state);
+        return "Order has been ${state} successful";
+    }
 }

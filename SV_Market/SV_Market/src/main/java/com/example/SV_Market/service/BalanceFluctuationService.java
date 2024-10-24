@@ -22,16 +22,20 @@ public class BalanceFluctuationService {
     @Autowired
     private UserService userService;
 
-    public BalanceFluctuation createBalanceFluctuation(String userId, String type, double amount, String content){
+    public BalanceFluctuation createBalanceFluctuation(String userId, String type, String amountS, String content){
         BalanceFluctuation bf = new BalanceFluctuation();
+        Double amount = Double.parseDouble(amountS);
         if(userService.getUserById(userId)==null)
             throw new RuntimeException("User not found");
         bf.setUser(userService.getUserById(userId));
-
+        double newBalance =0;
         bf.setTransactionType(type);
         bf.setAmount(amount);
-        double newBalance = userService.getUserById(userId).getBalance() - amount;
-        if (newBalance < 0) {
+        if(type.equals("+"))
+            newBalance = userService.getUserById(userId).getBalance() - amount;
+        if(type.equals("-"))
+            newBalance = userService.getUserById(userId).getBalance() - amount;
+        if (newBalance <= 0) {
             throw new IllegalArgumentException("Insufficient balance");
         }
 
@@ -42,6 +46,12 @@ public class BalanceFluctuationService {
         bf.setDate(LocalDate.now());
         return balanceFluctuationRepository.save(bf);
     }
+
+
+    public List<BalanceFluctuation> getBalanceFluctustionByUser(String userId){
+        return balanceFluctuationRepository.findByUserId(userId);
+    }
+
 
 
 }

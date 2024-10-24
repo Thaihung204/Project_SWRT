@@ -1,7 +1,10 @@
 package com.example.SV_Market.service;
 
+import com.example.SV_Market.entity.Notice;
 import com.example.SV_Market.entity.Order;
 import com.example.SV_Market.entity.OrderDetail;
+import com.example.SV_Market.entity.User;
+import com.example.SV_Market.repository.NoticeRepository;
 import com.example.SV_Market.repository.OrderRepository;
 import com.example.SV_Market.request.OrderCreationRequest;
 import com.example.SV_Market.response.OrderDetailResponse;
@@ -18,124 +21,26 @@ import java.util.stream.Collectors;
 public class NoticeService {
 
     @Autowired
-    OrderRepository orderRepository;
+    NoticeRepository noticeRepository;
     @Autowired
     ProductService productService;
     @Autowired
     UserService userService ;
 
-    public String createOrder(List<OrderCreationRequest> requests){
+    public Notice createNotice(String userId, String title, String content) {
+        // Find user by userId
+        OrderRepository userRepository;
+        User user = userService.getUserById(userId);
 
-        LocalDate currentDate = LocalDate.now();
+        // Create new Notice
+        Notice notice = new Notice();
+        notice.setUser(user);  // Set the user
+        notice.setTitle(title);  // Set the notice title
+        notice.setContent(content);  // Set the notice content
+        notice.setCreateAt(LocalDate.now());  // Set the current date as createAt
 
-        requests.stream().map(request -> {
-            Order order = new Order();
-            List<OrderDetail> orderDetails =
-                    request.getOrderDetails().stream().map(o -> {
-                        OrderDetail orderDetail = new OrderDetail();
-                        orderDetail.setProduct(productService.getProductById(o.getProductId()));
-                        if(request.getType().equals("exchange"))
-                            orderDetail.setProductTrade(productService.getProductById(o.getProductTradeId()));
-
-                        orderDetail.setQuantity(o.getQuantity());
-                        orderDetail.setOrder(order);
-                        return orderDetail;
-                    }).collect(Collectors.toList());
-            order.setOrderDetails(orderDetails);
-            order.setSeller(userService.getUserById(request.getSellerId()));
-            order.setBuyer(userService.getUserById(request.getBuyerId()));
-            order.setType(request.getType());
-            order.setState("pending");
-            order.setTotal(request.getTotal());
-            order.setPaymentBy(request.getPaymentBy());
-            order.setCreateAt(currentDate);
-
-            return orderRepository.save(order);
-        }).collect(Collectors.toList());
-    return "Order has been created";
+        // Save Notice to the database
+        return noticeRepository.save(notice);
     }
 
-    public List<OrderResponse> getAllOrder(){
-        return formatListOrder(orderRepository.findAll());
-    }
-
-    public Order getOrderById(String id) {
-        return orderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
-    }
-
-    public List<OrderResponse> getOrderBySellerIdAndState(String sellId, String state){
-        return formatListOrder(orderRepository.findOrdersBySellerIdAndState(sellId,state));
-    }
-    public List<OrderResponse> getOrderByBuyerIdAndState(String buyId, String state){
-        return formatListOrder(orderRepository.findOrdersByBuyerIdAndState(buyId,state));
-    }
-
-//    public Product updateProduct(String productId, ProductUpdateRequest request){
-//        Product product = getProduct(productId);
-//
-//        LocalDate currentDate = LocalDate.now();
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-//        String formattedDate = currentDate.format(formatter);
-//
-//        product.setProductName(request.getProductName());
-//        product.setQuantity(request.getQuantity());
-//        product.setPrice(request.getPrice());
-//        product.setDescription(request.getDescription());
-//        product.setCategoryId(request.getCategoryId());
-//        product.setState(request.getState());
-//        product.setCreate_at(currentDate);
-//
-//        return productRepository.save(product);
-//    }
-
-    public List<OrderResponse> formatListOrder(List<Order> orders){
-        return  orders.stream().map(order -> {
-            OrderResponse response = new OrderResponse();
-            response.setOrderId(order.getOrderId());
-
-            List<OrderDetailResponse> orderDetailResponses= order.getOrderDetails().stream().map(orderDetail -> {
-                OrderDetailResponse orderDetailResponse = new OrderDetailResponse();
-                if(orderDetail.getProduct()!=null)
-                orderDetailResponse.setProduct(productService.formatProductOrderResponse(orderDetail.getProduct()));
-                if(orderDetail.getProductTrade()!=null)
-                orderDetailResponse.setProductTrade(productService.formatProductOrderResponse(orderDetail.getProductTrade()));
-                orderDetailResponse.setQuantity(orderDetail.getQuantity());
-                return orderDetailResponse;
-            }).collect(Collectors.toList());
-            response.setOrderDetails(orderDetailResponses);
-            response.setSeller(userService.formatUser(order.getSeller()));
-            response.setBuyer(userService.formatUser(order.getBuyer()));
-            response.setType(order.getType());
-            response.setState(order.getState());
-            response.setPaymentBy(order.getPaymentBy());
-            response.setCreateAt(order.getCreateAt());
-            return response;
-        }).collect(Collectors.toList());
-    }
-
-    public OrderResponse formatOrder(Order order){
-
-            OrderResponse response = new OrderResponse();
-            response.setOrderId(order.getOrderId());
-
-            List<OrderDetailResponse> orderDetailResponses= order.getOrderDetails().stream().map(orderDetail -> {
-                OrderDetailResponse orderDetailResponse = new OrderDetailResponse();
-                if(orderDetail.getProduct()!=null)
-                    orderDetailResponse.setProduct(productService.formatProductOrderResponse(orderDetail.getProduct()));
-                if(orderDetail.getProductTrade()!=null)
-                    orderDetailResponse.setProductTrade(productService.formatProductOrderResponse(orderDetail.getProductTrade()));
-                orderDetailResponse.setQuantity(orderDetail.getQuantity());
-                return orderDetailResponse;
-            }).collect(Collectors.toList());
-            response.setOrderDetails(orderDetailResponses);
-            response.setSeller(userService.formatUser(order.getSeller()));
-            response.setBuyer(userService.formatUser(order.getBuyer()));
-            response.setType(order.getType());
-            response.setState(order.getState());
-            response.setPaymentBy(order.getPaymentBy());
-            response.setCreateAt(order.getCreateAt());
-            return response;
-
-    }
 }
