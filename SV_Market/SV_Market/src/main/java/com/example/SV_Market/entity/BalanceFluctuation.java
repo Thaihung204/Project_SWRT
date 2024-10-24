@@ -18,10 +18,12 @@ public class BalanceFluctuation {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "balance_fluctuation_id")
     private String balanceFluctuationId;
+
     @ManyToOne
     @JoinColumn(name = "userid", nullable = false, referencedColumnName = "userid")
     @JsonIgnore
     private User user;
+
     private String transactionType;
     private double amount;
     private double balance;

@@ -77,6 +77,20 @@ public class OrderService {
         return formatListOrder(orderRepository.findOrdersByBuyerIdAndState(buyId,state));
     }
 
+    public Order updateOrder(String orderid, String state){
+        Order order = getOrderById(orderid);
+        order.setState(state);
+
+        if(state.equals("shiping")) {
+//            productService.decreaseProductQuan("P01",1);
+            for(OrderDetail o : order.getOrderDetails()){
+                productService.decreaseProductQuan(o.getProduct().getProductId(), o.getQuantity());
+
+            }
+//
+        }
+        return orderRepository.save(order);
+    }
 //    public Product updateProduct(String productId, ProductUpdateRequest request){
 //        Product product = getProduct(productId);
 //

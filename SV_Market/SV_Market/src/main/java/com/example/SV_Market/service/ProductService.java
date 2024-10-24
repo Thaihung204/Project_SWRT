@@ -10,12 +10,13 @@ import com.example.SV_Market.request.ProductCreationRequest;
 import com.example.SV_Market.request.ProductUpdateRequest;
 import com.example.SV_Market.response.*;
 import com.example.SV_Market.request.SensorProductRequest;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -31,16 +32,15 @@ public class ProductService {
     CategoryRepository categoryRepository;
     @Autowired
     ProductRepository productRepository;
-    private final UserService userService;
     @Autowired
-    public ProductService(@Lazy UserService userService) {
-        this.userService = userService;
-    }
+    UserService userService;
     @Autowired
     CategoryService categoryService;
     @Autowired
     CloudinaryService cloudinaryService;
-    public Product createProduct(ProductCreationRequest request){
+
+
+    public Product createProduct(ProductCreationRequest request) throws IOException {
         LocalDate currentDate = LocalDate.now();
 
         Product product = new Product();
@@ -84,18 +84,12 @@ public class ProductService {
     }
 
     public List<ProductResponse> getProducts() {
+
         return formatListProductResponse(productRepository.findAll());
 
     }
-    public List<ProductResponse> getPublicProductsByUserId(String userId, String status) {
-        List<Product> list;
-        if(status.equals("pending")){
-            list = productRepository.findProductsByUserIdAndStatus(userId,status);
-            list.addAll(productRepository.findProductsByUserIdAndStatus(userId,"rejected"));
-            return formatListProductResponse(list);
-        } else {
-            return formatListProductResponse(productRepository.findProductsByUserIdAndStatus(userId, status));
-        }
+    public List<ProductResponse> getPublicProductsByUserId(String userId, String status) throws IOException {
+        return formatListProductResponse(productRepository.findProductsByUserIdAndStatus(userId, status));
     }
 
 
@@ -129,6 +123,23 @@ public class ProductService {
         return productRepository.save(product);
     }
 
+    //hung viet de giam sl sp
+    public void decreaseProductQuan(String productId,int quan){
+        Product product = getProductById(productId);
+        if(product.getQuantity()<quan)
+            throw new RuntimeException("Product do not enought!");
+        else if (product.getQuantity()==quan) {
+            product.setQuantity(0);
+            product.setStatus("hide");
+            productRepository.save(product);
+        }
+        else {
+            int newQuan = product.getQuantity()-quan;
+            product.setQuantity(newQuan);
+            productRepository.save(product);
+        }
+
+    }
     public Page<ProductResponse> getProductListing(
             int page,String sortType, String categoryId, String address, String productName, Double minPrice, Double maxPrice) {
         Sort sortOrder = Sort.unsorted();  // Giá trị mặc định là không sắp xếp.
@@ -234,11 +245,9 @@ public class ProductService {
 
                 User fuser = feedback.getSender();
                 UserResponse fuserResponse = new UserResponse();
-                fuserResponse.setUserId(fuser.getUserId());
                 fuserResponse.setUserName(fuser.getUserName());
                 fuserResponse.setProfilePicture(fuser.getProfilePicture());
                 feedbackResponse.setSender(fuserResponse);
-
                 feedbackResponse.setRating(feedback.getRating());
                 feedbackResponse.setDescription(feedback.getDescription());
                 feedbackResponse.setCreatedAt(feedback.getCreatedAt());
@@ -276,24 +285,22 @@ public class ProductService {
             response.setPrice(product.getPrice());
             response.setDescription(product.getDescription());
 
-            Category category = product.getCategory();
-            CategoryResponse categoryResponse = new CategoryResponse();
-            categoryResponse.setTitle(category.getTitle());
+//            Category category = product.getCategory();
+//            CategoryResponse categoryResponse = new CategoryResponse();
+//            categoryResponse.setTitle(category.getTitle());
 //            categoryResponse.setDescription(category.getDescription());
 //            categoryResponse.setImage(category.getImage());
-            response.setCategory(categoryResponse);
+//            response.setCategory(categoryResponse);
 
 //            response.setType(product.getType());
 //            response.setState(product.getState());
-            response.setStatus(product.getStatus());
             response.setCreate_at(product.getCreate_at());
 
 //            List<FeedbackResponse> feedbackResponses = product.getFeedBacks().stream().map(feedback -> {
 //                FeedbackResponse feedbackResponse = new FeedbackResponse();
-////
+//
 //                User fuser = feedback.getSender();
 //                UserResponse fuserResponse = new UserResponse();
-//                fuserResponse.setUserId(fuser.getUserId());
 //                fuserResponse.setUserName(fuser.getUserName());
 //                fuserResponse.setProfilePicture(fuser.getProfilePicture());
 //                feedbackResponse.setSender(fuserResponse);
@@ -323,10 +330,9 @@ public class ProductService {
             response.setImages(imageResponses);
             response.setQuantity(product.getQuantity());
             response.setPrice(product.getPrice());
-
+            response.setDescription(product.getDescription());
+            response.setCreate_at(product.getCreate_at());
             return response;
 
     }
-
-
 }

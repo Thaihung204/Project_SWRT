@@ -53,8 +53,10 @@ public class OrderController {
         return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
-//    @PutMapping("/{productId}")
-//    Product updateProduct(@PathVariable String productId, @RequestBody ProductUpdateRequest request) {
-//        return productService.updateProduct(productId, request);
-//    }
+    @PutMapping()
+    public String updateorder( @RequestParam(value = "orderId", required = false) String orderId,
+                               @RequestParam(value = "state", required = false) String state){
+        orderService.updateOrder(orderId,state);
+        return "Order has been ${state} successful";
+    }
 }
