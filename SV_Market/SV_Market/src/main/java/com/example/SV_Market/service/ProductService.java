@@ -13,6 +13,8 @@ import com.example.SV_Market.request.SensorProductRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -148,6 +150,7 @@ public class ProductService {
         }
 
     }
+
     public Page<ProductResponse> getProductListing(
             int page,String sortType, String categoryId, String address, String productName, Double minPrice, Double maxPrice) {
         Sort sortOrder = Sort.unsorted();  // Giá trị mặc định là không sắp xếp.
@@ -205,13 +208,20 @@ public class ProductService {
         return new PageImpl<>(pageProducts, pageable, totalElements);
     }
 
-    public Product updateProductStatus(String productId, String status) {
-        Product product = getProductById(productId);
-         if(product.getQuantity()==0 && status.equals("public"))
-            throw new RuntimeException("Can not public product have quantity equal 0 !!");
-        product.setStatus(status);
-        return productRepository.save(product);
+    public ResponseEntity<?> updateProductStatus(String productId, String status) {
+        try {
+            Product product = getProductById(productId);
+            if (product.getQuantity() == 0 && status.equals("public")) {
+                throw new RuntimeException("Cannot publish a product with zero quantity!");
+            }
+            product.setStatus(status);
+            Product updatedProduct = productRepository.save(product);
+            return ResponseEntity.ok(updatedProduct);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
+
 
     public void deleteProduct(String productId){
         productRepository.deleteById(productId);

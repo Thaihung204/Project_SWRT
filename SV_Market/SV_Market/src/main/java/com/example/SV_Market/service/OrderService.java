@@ -92,11 +92,18 @@ public class OrderService {
             }
 
         //check user cancle order
-        if(state.equals("cancle")&&order.getPaymentBy().equals("lazuni"))
-            balanceFluctuationService.createBalanceFluctuation(order.getBuyer().getUserId(),"+",order.getTotal(),"Hoàn tiền giao dịch bị hủy");
+        if(state.equals("cancle")&&order.getPaymentBy().equals("Lazuni"))
+            balanceFluctuationService.createBalanceFluctuation(order.getBuyer().getUserId(),"+",order.getTotal(),"Hoàn tiền giao dịch bị hủy-"+orderid);
+
+        //check success order
+        if(state.equals("successful")&&order.getPaymentBy().equals("Lazuni")){
+            balanceFluctuationService.createBalanceFluctuation(order.getSeller().getUserId(),"+",order.getTotal(),"Thanh toán đơn hàng thành công-"+orderid);
+        }
         return orderRepository.save(order);
     }
-
+    public void deleteOrder(String orderid){
+        orderRepository.deleteById(orderid);
+    }
     public List<OrderResponse> formatListOrder(List<Order> orders){
         return  orders.stream().map(order -> {
             OrderResponse response = new OrderResponse();
