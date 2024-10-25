@@ -354,7 +354,7 @@ public class ProductService {
     private int getProductCreationLimit(User currentUpgrade) {
         int publicProductCount = productRepository.findProductsByUserIdAndStatus(currentUpgrade.getUserId(), "public").size();
         int pendingProductCount = productRepository.findProductsByUserIdAndStatus(currentUpgrade.getUserId(), "pending").size();
-        int hiddenProductCount = productRepository.findProductsByUserIdAndStatus(currentUpgrade.getUserId(), "hidden").size();
+        int hiddenProductCount = productRepository.findProductsByUserIdAndStatus(currentUpgrade.getUserId(), "hide").size();
 
         int totalAvailableProducts = publicProductCount + pendingProductCount + hiddenProductCount;
         String packageType = currentUpgrade.getRole(); // Assuming the type corresponds to the package name
@@ -362,8 +362,8 @@ public class ProductService {
             case "business":
                 return 40 - totalAvailableProducts; // Limit for business package
             case "sub-business":
-                return 10 - totalAvailableProducts; // Limit for sub-business package
-            case "standard":
+                return 15 - totalAvailableProducts; // Limit for sub-business package
+
             default:
                 return 5 - totalAvailableProducts;  // Limit for standard package
         }
