@@ -32,7 +32,7 @@ public class BalanceFluctuationService {
         bf.setTransactionType(type);
         bf.setAmount(amount);
         if(type.equals("+"))
-            newBalance = userService.getUserById(userId).getBalance() - amount;
+            newBalance = userService.getUserById(userId).getBalance() + amount;
         if(type.equals("-"))
             newBalance = userService.getUserById(userId).getBalance() - amount;
         if (newBalance <= 0) {
