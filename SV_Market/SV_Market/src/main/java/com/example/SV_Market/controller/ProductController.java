@@ -38,7 +38,7 @@ public class ProductController {
             return ResponseEntity.ok(product); // 200 OK with new product save in database
         } catch (RuntimeException e) {
             // Return
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Đạt giới hạn sản phẩm");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
 
     }

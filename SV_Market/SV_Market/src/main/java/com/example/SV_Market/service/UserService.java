@@ -193,7 +193,7 @@ public User getUserById(String userId) {
 
             return userRepository.save(user);
         } else {
-            return userRepository.save(user);
+            throw new RuntimeException("Số dư không đủ");
         }
 
     }
