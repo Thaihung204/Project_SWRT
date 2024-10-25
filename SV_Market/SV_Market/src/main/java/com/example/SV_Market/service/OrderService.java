@@ -39,7 +39,7 @@ public class OrderService {
         requests.stream().map(request -> {
 
             Order order = new Order();
-            if(request.getType().equals("buy") && request.getPaymentBy().equals("lazuni"))
+            if(request.getType().equals("buy") && request.getPaymentBy().equals("Lazuni"))
                 balanceFluctuationService.createBalanceFluctuation(request.getBuyerId(),"-",request.getTotal(),"Thanh toán giao dịch-"+order.getOrderId());
             List<OrderDetail> orderDetails =
                     request.getOrderDetails().stream().map(o -> {
