@@ -29,6 +29,7 @@ public interface ProductRepository extends JpaRepository<Product, String> {
     List<Product> sensor(String status);
     @Query("SELECT p from Product p WHERE p.user.userId= :userId")
     List<Product> findAllByUserId(@Param("userId") String userId);
+
     //de hien thi tren trang home
     List<Product> findByStatus(String tatus);
     List<Product> findByCategory(Category category);

@@ -38,6 +38,7 @@ public class BalanceFluctuationService {
         if (newBalance <= 0) {
             throw new IllegalArgumentException("Insufficient balance");
         }
+
         userService.getUserById(userId).setBalance(newBalance); // Update the user's balance
         bf.setBalance(newBalance);
         bf.setContent(content);
@@ -46,9 +47,11 @@ public class BalanceFluctuationService {
         return balanceFluctuationRepository.save(bf);
     }
 
+
     public List<BalanceFluctuation> getBalanceFluctustionByUser(String userId){
         return balanceFluctuationRepository.findByUserId(userId);
     }
+
 
 
 }

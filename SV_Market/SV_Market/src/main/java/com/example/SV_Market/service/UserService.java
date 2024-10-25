@@ -2,11 +2,13 @@ package com.example.SV_Market.service;
 
 import com.example.SV_Market.dto.UserDto;
 import com.example.SV_Market.dto.UserUpdateRequest;
+import com.example.SV_Market.entity.BalanceFluctuation;
 import com.example.SV_Market.entity.Product;
 import com.example.SV_Market.entity.SubscriptionPackage;
 import com.example.SV_Market.entity.Upgrade;
 import com.example.SV_Market.entity.User;
 
+import com.example.SV_Market.repository.PaymentRepository;
 import com.example.SV_Market.repository.ProductRepository;
 import com.example.SV_Market.repository.SubscriptionPackageRepository;
 import com.example.SV_Market.repository.UpgradeRepository;
@@ -16,11 +18,14 @@ import com.example.SV_Market.response.UserResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.time.Period;
 import java.util.Date;
 import java.util.List;
@@ -37,6 +42,9 @@ public class UserService {
     private UpgradeRepository upgradeRepository;
     @Autowired
     private SubscriptionPackageRepository packageRepository;
+    @Autowired
+    private PaymentRepository paymentRepository;
+
     private final ProductService productService;
     @Autowired
     public UserService(@Lazy ProductService productService) {
@@ -66,7 +74,13 @@ public class UserService {
         return userRepository.findAll();
     }
 
-
+//    public Optional<User> getUserById(String userId) {
+//        return userRepository.findById(userId);
+//    }
+//    public User getUserById(String userId) {
+//        return userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User Not Found!"));
+//
+//    }
 public User getUserById(String userId) {
     return userRepository.findById(userId)
             .orElseThrow(() -> new RuntimeException("User with ID " + userId + " not found!"));
@@ -140,12 +154,39 @@ public User getUserById(String userId) {
 
         if (user.getBalance() >= subscriptionPackage.getPrice()) {
             user.setBalance(user.getBalance() - subscriptionPackage.getPrice());
-            user.setRole(subscriptionPackage.getRoleName());
             Upgrade upgrade = new Upgrade();
-            upgrade.setUser(user);
-            upgrade.setSubscriptionPackage(subscriptionPackage);
-            upgrade.setStartDate(LocalDate.now());
-            upgrade.setEndDate(LocalDate.now().plusMonths(1));
+            //nang cap goi moi giong goi cu
+            if (user.getRole().equals(subscriptionPackage.getRoleName()) ){
+                Optional<Upgrade> latestUpgrade = upgradeRepository.findLatestByUserID(user.getUserId());
+                upgrade = latestUpgrade.get();
+                //dem so ngay da dung
+                long daysUsed = ChronoUnit.DAYS.between(upgrade.getStartDate(), upgrade.getEndDate());
+
+                upgrade.setStartDate(LocalDate.now());
+                upgrade.setEndDate(LocalDate.now().plusMonths(1).plusDays(daysUsed));
+            } else {
+                //nang cap goi moi
+                user.setRole(subscriptionPackage.getRoleName());
+                upgrade.setUser(user);
+                upgrade.setSubscriptionPackage(subscriptionPackage);
+
+                upgrade.setStartDate(LocalDate.now());
+                upgrade.setEndDate(LocalDate.now().plusMonths(1));
+//                log.info(upgrade.getStartDate()+" den " + upgrade.getEndDate());
+            }
+
+
+
+            BalanceFluctuation balanceFluctuation = BalanceFluctuation.builder()
+                    .user(user)
+                    .transactionType("+")
+                    .amount(subscriptionPackage.getPrice())
+                    .balance(user.getBalance())
+                    .content(" Upgrade to " + subscriptionPackage.getPackageName() )
+                    .date(LocalDate.now())
+                    .state("Giao dịch thành công")
+                    .build();
+            paymentRepository.save(balanceFluctuation);
 
             upgradeRepository.save(upgrade);
 
