@@ -27,6 +27,11 @@ public class FeedbackController {
         return feedbackService.getFeedbacks(productId);
     }
 
+    @DeleteMapping("/{feedbackId}")
+    public String deleteFeedback(@PathVariable String feedbackId){
+        feedbackService.deleteFeedback(feedbackId);
+        return "Feedback has been deleted";
+    }
 //    @GetMapping("/{categoryId}")
 //    Category getCategory(@PathVariable String categoryId){
 //        return categoryService.getCategory(categoryId);

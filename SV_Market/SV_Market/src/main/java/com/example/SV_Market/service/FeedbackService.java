@@ -39,7 +39,9 @@ public class FeedbackService {
         return (List<FeedBack>) feedbackRepository.findById(productId).orElseThrow(() -> new RuntimeException("Feedback Not Found!"));
     }
 
-
+    public void deleteFeedback (String feedbackId){
+        feedbackRepository.deleteById(feedbackId);
+    }
 
 
 }
