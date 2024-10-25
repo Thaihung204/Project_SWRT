@@ -1,4 +1,3 @@
-
 'use strict';
 
 const usernamePage = document.querySelector('#username-page');
