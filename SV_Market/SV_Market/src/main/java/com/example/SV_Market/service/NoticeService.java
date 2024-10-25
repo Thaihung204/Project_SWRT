@@ -31,16 +31,18 @@ public class NoticeService {
         // Find user by userId
         OrderRepository userRepository;
         User user = userService.getUserById(userId);
-
         // Create new Notice
         Notice notice = new Notice();
         notice.setUser(user);  // Set the user
         notice.setTitle(title);  // Set the notice title
         notice.setContent(content);  // Set the notice content
         notice.setCreateAt(LocalDate.now());  // Set the current date as createAt
-
         // Save Notice to the database
         return noticeRepository.save(notice);
+    }
+
+    public List<Notice> getNoticeByUser(String userId){
+        return noticeRepository.getNoticeByUser(userId);
     }
 
 }
