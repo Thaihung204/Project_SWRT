@@ -59,4 +59,10 @@ public class OrderController {
         orderService.updateOrder(orderId,state);
         return "Order has been ${state} successful";
     }
+
+    @DeleteMapping("/{orderId}")
+    public String deleteOrder(@PathVariable String orderId){
+    orderService.deleteOrder(orderId);
+    return "Order has been deleted";
+    }
 }
