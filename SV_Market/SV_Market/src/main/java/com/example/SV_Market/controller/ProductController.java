@@ -1,6 +1,7 @@
 package com.example.SV_Market.controller;
 
 import com.example.SV_Market.entity.Product;
+import com.example.SV_Market.entity.User;
 import com.example.SV_Market.repository.ProductRepository;
 import com.example.SV_Market.request.ProductCreationRequest;
 import com.example.SV_Market.response.ProductResponse;
@@ -31,8 +32,15 @@ public class ProductController {
 
     @PostMapping()
 
-    Product createProduct(@ModelAttribute  ProductCreationRequest request) throws IOException {
-        return productService.createProduct(request);
+    public ResponseEntity<?> createProduct(@ModelAttribute  ProductCreationRequest request){
+        try {
+            Product product = productService.createProduct(request);
+            return ResponseEntity.ok(product); // 200 OK with new product save in database
+        } catch (RuntimeException e) {
+            // Return
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Đạt giới hạn sản phẩm");
+        }
+
     }
 
 
