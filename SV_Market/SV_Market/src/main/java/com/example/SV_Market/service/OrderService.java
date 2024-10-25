@@ -37,14 +37,16 @@ public class OrderService {
         LocalDate currentDate = LocalDate.now();
 
         requests.stream().map(request -> {
+
             Order order = new Order();
+            if(request.getType().equals("buy") && request.getPaymentBy().equals("lazuni"))
+                balanceFluctuationService.createBalanceFluctuation(request.getBuyerId(),"-",request.getTotal(),"Thanh toán giao dịch-"+order.getOrderId());
             List<OrderDetail> orderDetails =
                     request.getOrderDetails().stream().map(o -> {
                         OrderDetail orderDetail = new OrderDetail();
                         orderDetail.setProduct(productService.getProductById(o.getProductId()));
                         if(request.getType().equals("exchange"))
                             orderDetail.setProductTrade(productService.getProductById(o.getProductTradeId()));
-
                         orderDetail.setQuantity(o.getQuantity());
                         orderDetail.setOrder(order);
                         return orderDetail;
@@ -87,7 +89,7 @@ public class OrderService {
             for(OrderDetail o : order.getOrderDetails()){
                 productService.decreaseProductQuan(o.getProduct().getProductId(), o.getQuantity());
             }
-        }
+            }
 
         //check user cancle order
         if(state.equals("cancle")&&order.getPaymentBy().equals("lazuni"))

@@ -30,7 +30,7 @@ public class Order {
     private List<OrderDetail> orderDetails;
 
     @Column(name = "type", length = 50, nullable = false)
-    private String type;
+    private String type; //sell / exchange
 
     @ManyToOne()
     @JoinColumn(name = "sell_id", nullable = false, referencedColumnName = "userid")
