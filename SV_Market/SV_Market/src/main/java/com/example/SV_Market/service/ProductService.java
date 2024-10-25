@@ -259,6 +259,7 @@ public class ProductService {
                 fuserResponse.setUserId(fuser.getUserId());
                 fuserResponse.setUserName(fuser.getUserName());
                 fuserResponse.setProfilePicture(fuser.getProfilePicture());
+                feedbackResponse.setFeedbackId(feedback.getFeedbackId());
                 feedbackResponse.setSender(fuserResponse);
                 feedbackResponse.setRating(feedback.getRating());
                 feedbackResponse.setDescription(feedback.getDescription());

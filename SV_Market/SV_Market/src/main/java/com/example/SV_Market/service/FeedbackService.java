@@ -24,6 +24,7 @@ public class FeedbackService {
     ProductService productService;
 
     public FeedBack createFeedback(FeedbackCreationRequest request){
+        if(checkExist(request.getProductId(),request.getSenderId(),request.getReceiverId())) throw new RuntimeException();
         LocalDate currentDate = LocalDate.now();
         FeedBack feedBack = new FeedBack();
         feedBack.setSender(userService.getUserById(request.getSenderId()));
@@ -42,6 +43,9 @@ public class FeedbackService {
     public void deleteFeedback (String feedbackId){
         feedbackRepository.deleteById(feedbackId);
     }
-
-
+    public boolean checkExist(String productId,String senderId,String receiverId){
+        if(feedbackRepository.checkFeedbackExist(productId,senderId,receiverId) !=0)
+            return true;
+        return false;
+    }
 }
