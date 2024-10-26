@@ -6,6 +6,7 @@ import com.example.SV_Market.entity.ProductImage;
 import com.example.SV_Market.entity.User;
 import com.example.SV_Market.repository.CategoryRepository;
 import com.example.SV_Market.repository.ProductRepository;
+import com.example.SV_Market.repository.UserRepository;
 import com.example.SV_Market.request.ProductCreationRequest;
 import com.example.SV_Market.request.ProductUpdateRequest;
 import com.example.SV_Market.response.*;
@@ -35,6 +36,8 @@ public class ProductService {
     @Autowired
     ProductRepository productRepository;
     @Autowired
+    UserRepository userRepository;
+    @Autowired
     UserService userService;
     @Autowired
     CategoryService categoryService;
@@ -46,6 +49,15 @@ public class ProductService {
         LocalDate currentDate = LocalDate.now();
 
         Product product = new Product();
+        User currentUpgrade = userRepository.findById(request.getUserId()).get();
+
+        // Kiểm tra giới hạn sản phẩm
+        int availableLimit = getProductCreationLimit(currentUpgrade);
+
+        if (availableLimit <= 0) {
+            return product; //thong bao khong the tao san pham
+        }
+
 
         List<ProductImage> productImages = new ArrayList<>();  // Create an empty list to store the ProductImage objects
 
@@ -347,5 +359,23 @@ public class ProductService {
             response.setCreate_at(product.getCreate_at());
             return response;
 
+    }
+
+    private int getProductCreationLimit(User currentUpgrade) {
+        int publicProductCount = productRepository.findProductsByUserIdAndStatus(currentUpgrade.getUserId(), "public").size();
+        int pendingProductCount = productRepository.findProductsByUserIdAndStatus(currentUpgrade.getUserId(), "pending").size();
+        int hiddenProductCount = productRepository.findProductsByUserIdAndStatus(currentUpgrade.getUserId(), "hidden").size();
+
+        int totalAvailableProducts = publicProductCount + pendingProductCount + hiddenProductCount;
+        String packageType = currentUpgrade.getRole(); // Assuming the type corresponds to the package name
+        switch (packageType) {
+            case "business":
+                return 40 - totalAvailableProducts; // Limit for business package
+            case "sub-business":
+                return 10 - totalAvailableProducts; // Limit for sub-business package
+            case "standard":
+            default:
+                return 5 - totalAvailableProducts;  // Limit for standard package
+        }
     }
 }

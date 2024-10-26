@@ -17,7 +17,7 @@ import java.time.LocalDate;
 public class Upgrade {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "upgrade_id", length = 50)
     private String upgradeId;
 
