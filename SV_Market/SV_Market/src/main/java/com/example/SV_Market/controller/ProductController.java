@@ -3,6 +3,7 @@ package com.example.SV_Market.controller;
 import com.example.SV_Market.entity.Product;
 import com.example.SV_Market.repository.ProductRepository;
 import com.example.SV_Market.request.ProductCreationRequest;
+import com.example.SV_Market.request.ProductUpdateRequest;
 import com.example.SV_Market.response.ProductResponse;
 import com.example.SV_Market.service.CloudinaryService;
 import com.example.SV_Market.service.ProductService;
@@ -90,11 +91,11 @@ public class ProductController {
     }
 
     // Update a product
-//    @PutMapping("/update/{productId}")
-//    public ResponseEntity<Product> updateProduct(@PathVariable String productId, @RequestBody ProductUpdateRequest request) {
-//        Product updatedProduct = productService.updateProduct(productId, request);
-//        return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
-//    }
+    @PutMapping("/update/{productId}")
+    public ResponseEntity<Product> updateProduct(@PathVariable String productId, @RequestBody ProductUpdateRequest request) {
+        Product updatedProduct = productService.updateProduct(productId, request);
+        return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
+    }
 
     @PutMapping("/update")
     public void updateProductStatus(

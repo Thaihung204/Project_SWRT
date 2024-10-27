@@ -97,14 +97,26 @@ public class ProductService {
 
     public Product updateProduct(String productId, ProductUpdateRequest request){
         Product product = getProductById(productId);
+
         LocalDate currentDate = LocalDate.now();
+
+        List<ProductImage> productImages = new ArrayList<>();  // Create an empty list to store the ProductImage objects
+        if (request.getImages() != null) {
+            for (String imagePath : cloudinaryService.uploadProductImage(request.getImages())) {  // Iterate over each image path from the request
+                ProductImage productImage = new ProductImage();  // Create a new ProductImage object
+                productImage.setPath(imagePath);  // Set the image path
+                productImage.setProduct(product);  // Associate the image with the product
+                productImages.add(productImage);  // Add the productImage to the list
+            }
+            product.setImages(productImages);
+        }
+
         product.setProductName(request.getProductName());
         product.setQuantity(request.getQuantity());
         product.setPrice(request.getPrice());
         product.setDescription(request.getDescription());
         product.setType((request.getType()));
         product.setState(request.getState());
-        product.setStatus(request.getStatus());
         product.setCreate_at(currentDate);
         return productRepository.save(product);
     }

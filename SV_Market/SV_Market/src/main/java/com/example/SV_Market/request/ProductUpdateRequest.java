@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class ProductUpdateRequest {
 
     protected String productName;
+    protected MultipartFile[] images;
     protected int quantity;
     protected long price;
     protected String description;
