@@ -2,7 +2,9 @@ package com.example.SV_Market.service;
 
 import com.example.SV_Market.entity.Category;
 import com.example.SV_Market.entity.CategoryImage;
+import com.example.SV_Market.entity.Product;
 import com.example.SV_Market.repository.CategoryRepository;
+import com.example.SV_Market.repository.ProductRepository;
 import com.example.SV_Market.request.CategoryCreationRequest;
 import com.example.SV_Market.request.CategoryUpdateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,8 @@ public class CategoryService {
 
     @Autowired
     private CategoryRepository categoryRepository;
+    @Autowired
+    ProductRepository productRepository;
 
     @Autowired
     private CloudinaryService cloudinaryService;
@@ -70,7 +74,17 @@ public class CategoryService {
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new RuntimeException("Category not found with id: " + categoryId));
 
-        // Xóa Category và tất cả các Product liên quan nhờ cascade và orphanRemoval
+        // Retrieve the existing "other" category
+        Category otherCategory = categoryRepository.findByTitle("other").get();
+
+        // Reassign all products to "other" category
+        List<Product> products = productRepository.findByCategory(category);
+        for (Product product : products) {
+            product.setCategory(otherCategory);
+        }
+        productRepository.saveAll(products);
+
+        // Delete the original category
         categoryRepository.delete(category);
     }
 }
