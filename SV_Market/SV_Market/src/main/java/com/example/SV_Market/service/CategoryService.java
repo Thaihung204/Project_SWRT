@@ -75,7 +75,7 @@ public class CategoryService {
                 .orElseThrow(() -> new RuntimeException("Category not found with id: " + categoryId));
 
         // Retrieve the existing "other" category
-        Category otherCategory = categoryRepository.findByTitle("other").get();
+        Category otherCategory = categoryRepository.findByTitle("Khác").get();
 
         // Reassign all products to "other" category
         List<Product> products = productRepository.findByCategory(category);
