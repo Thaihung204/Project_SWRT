@@ -212,7 +212,8 @@ public class ProductService {
         try {
             Product product = getProductById(productId);
             if (product.getQuantity() == 0 && status.equals("public")) {
-                throw new RuntimeException("Cannot publish a product with zero quantity!");
+                // Return a custom error response with a specific message
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("000: Cannot publish a product with zero quantity!");
             }
             product.setStatus(status);
             Product updatedProduct = productRepository.save(product);

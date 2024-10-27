@@ -148,55 +148,52 @@ public User getUserById(String userId) {
     }
     @Transactional
     public User upgradeUserRole(UpgradeRequest request) {
-
         User user = getUserById(request.getUserId());
         SubscriptionPackage subscriptionPackage = getPackage(request.getPackageId());
 
         if (user.getBalance() >= subscriptionPackage.getPrice()) {
             user.setBalance(user.getBalance() - subscriptionPackage.getPrice());
-            Upgrade upgrade = new Upgrade();
-            //nang cap goi moi giong goi cu
-            if (user.getRole().equals(subscriptionPackage.getRoleName()) ){
-                Optional<Upgrade> latestUpgrade = upgradeRepository.findLatestByUserID(user.getUserId());
+            Upgrade upgrade;
+
+            Optional<Upgrade> latestUpgrade = upgradeRepository.findLatestByUserID(user.getUserId());
+
+            if (latestUpgrade.isPresent() && user.getRole().equals(subscriptionPackage.getRoleName())) {
                 upgrade = latestUpgrade.get();
-                //dem so ngay da dung
+                // Count days used
                 long daysUsed = ChronoUnit.DAYS.between(upgrade.getStartDate(), upgrade.getEndDate());
 
                 upgrade.setStartDate(LocalDate.now());
                 upgrade.setEndDate(LocalDate.now().plusMonths(1).plusDays(daysUsed));
             } else {
-                //nang cap goi moi
+                // Upgrade to new package
+                upgrade = new Upgrade();
                 user.setRole(subscriptionPackage.getRoleName());
                 upgrade.setUser(user);
                 upgrade.setSubscriptionPackage(subscriptionPackage);
 
                 upgrade.setStartDate(LocalDate.now());
                 upgrade.setEndDate(LocalDate.now().plusMonths(1));
-//                log.info(upgrade.getStartDate()+" den " + upgrade.getEndDate());
             }
-
-
 
             BalanceFluctuation balanceFluctuation = BalanceFluctuation.builder()
                     .user(user)
-                    .transactionType("+")
+                    .transactionType("-")
                     .amount(subscriptionPackage.getPrice())
                     .balance(user.getBalance())
-                    .content(" Upgrade to " + subscriptionPackage.getPackageName() )
+                    .content(" Upgrade to " + subscriptionPackage.getRoleName())
                     .date(LocalDate.now())
                     .state("Giao dịch thành công")
                     .build();
+
             paymentRepository.save(balanceFluctuation);
-
             upgradeRepository.save(upgrade);
-
-
             return userRepository.save(user);
         } else {
+            // Optional: log or throw an exception if balance is insufficient
             return userRepository.save(user);
         }
-
     }
+
 
     public User banUser(String userId){
         User user = getUserById(userId);
