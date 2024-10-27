@@ -55,7 +55,7 @@ public class ProductService {
         int availableLimit = getProductCreationLimit(currentUpgrade);
 
         if (availableLimit <= 0) {
-            return product; //thong bao khong the tao san pham
+            throw new RuntimeException("Đạt giới hạn sản phẩm");//thong bao khong the tao san pham
         }
 
 
@@ -127,10 +127,10 @@ public class ProductService {
         return formatListProductResponse(list);
     }
 
-    public Product acceptProduct(SensorProductRequest request) {
+    public ProductResponse acceptProduct(SensorProductRequest request) {
         Product product = getProductById(request.getProductId());
         product.setStatus(request.getStatus());
-        return productRepository.save(product);
+        return formatProductResponse(productRepository.save(product));
     }
 
     //hung viet de giam sl sp
