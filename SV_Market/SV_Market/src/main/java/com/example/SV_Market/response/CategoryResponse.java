@@ -13,6 +13,7 @@ import lombok.Setter;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 
 public class CategoryResponse {
+    private  String categoryId;
     private String title;
     private String description;
     private String image;

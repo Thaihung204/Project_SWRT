@@ -244,7 +244,9 @@ public class ProductService {
             response.setUser(userResponse);
 
             List<ProductImageResponse> imageResponses = product.getImages().stream().map(image -> {
+
                 ProductImageResponse imageResponse = new ProductImageResponse();
+                imageResponse.setImageId(image.getProductImageId());
                 imageResponse.setPath(image.getPath());
                 return imageResponse;
             }).collect(Collectors.toList());
@@ -256,6 +258,7 @@ public class ProductService {
 
             Category category = product.getCategory();
             CategoryResponse categoryResponse = new CategoryResponse();
+            categoryResponse.setCategoryId((category.getCategoryId()));
             categoryResponse.setTitle(category.getTitle());
             categoryResponse.setDescription(category.getDescription());
             categoryResponse.setImage(category.getImage());
