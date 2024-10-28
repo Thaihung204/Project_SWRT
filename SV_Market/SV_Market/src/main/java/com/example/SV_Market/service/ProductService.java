@@ -62,7 +62,7 @@ public class ProductService {
 
         List<ProductImage> productImages = new ArrayList<>();  // Create an empty list to store the ProductImage objects
 
-            for (String imagePath : cloudinaryService.uploadProductImage(request.getImages())) {  // Iterate over each image path from the request
+        for (String imagePath : cloudinaryService.uploadProductImage(request.getImages())) {  // Iterate over each image path from the request
             ProductImage productImage = new ProductImage();  // Create a new ProductImage object
             productImage.setPath(imagePath);  // Set the image path
             productImage.setProduct(product);  // Associate the image with the product
@@ -113,22 +113,25 @@ public class ProductService {
 
         LocalDate currentDate = LocalDate.now();
 
-        List<ProductImage> productImages = new ArrayList<>();  // Create an empty list to store the ProductImage objects
+
         if (request.getImages() != null) {
-            for (String imagePath : cloudinaryService.uploadProductImage(request.getImages())) {  // Iterate over each image path from the request
-                ProductImage productImage = new ProductImage();  // Create a new ProductImage object
-                productImage.setPath(imagePath);  // Set the image path
-                productImage.setProduct(product);  // Associate the image with the product
-                productImages.add(productImage);  // Add the productImage to the list
+            List<ProductImage> productImages = new ArrayList<>();
+            for (String imagePath : cloudinaryService.uploadProductImage(request.getImages())) {
+                ProductImage productImage = new ProductImage();
+                productImage.setPath(imagePath);
+                productImage.setProduct(product);
+                productImages.add(productImage);
             }
-            product.setImages(productImages);
+            product.getImages().addAll(productImages);  // Append new images rather than overwriting old ones
         }
+
 
         product.setProductName(request.getProductName());
         product.setQuantity(request.getQuantity());
         product.setPrice(request.getPrice());
         product.setDescription(request.getDescription());
         product.setType((request.getType()));
+        product.setCategory(categoryService.getCategory(request.getCategoryId()));
         product.setState(request.getState());
         product.setCreate_at(currentDate);
         return productRepository.save(product);

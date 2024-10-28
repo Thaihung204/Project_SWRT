@@ -32,7 +32,6 @@ public class ProductController {
     private ProductRepository productRepository;
 
     @PostMapping()
-
     public ResponseEntity<?> createProduct(@ModelAttribute  ProductCreationRequest request){
         try {
             Product product = productService.createProduct(request);
@@ -100,7 +99,7 @@ public class ProductController {
 
     // Update a product
     @PutMapping("/update/{productId}")
-    public ResponseEntity<Product> updateProduct(@PathVariable String productId, @RequestBody ProductUpdateRequest request) {
+    public ResponseEntity<Product> updateProduct(@PathVariable String productId, @ModelAttribute ProductUpdateRequest request) {
         Product updatedProduct = productService.updateProduct(productId, request);
         return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
     }
