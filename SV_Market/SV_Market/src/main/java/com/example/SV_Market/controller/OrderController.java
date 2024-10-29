@@ -37,6 +37,11 @@ public class OrderController {
     OrderResponse getOrder(@PathVariable String orderId){
         return orderService.formatOrder(orderService.getOrderById(orderId));
     }
+//    @DeleteMapping("/{orderId}")
+//    public ResponseEntity<String> deleteProduct(@PathVariable String orderId) {
+//        orderService.deleteOrder(orderId);
+//        return ResponseEntity.ok("Order has been deleted");
+//    }
 
     @GetMapping("/receive")
     public ResponseEntity<List<OrderResponse>> getOrdersBySellerIdAndState(

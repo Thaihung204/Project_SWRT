@@ -39,7 +39,7 @@ public class OrderService {
         requests.stream().map(request -> {
 
             Order order = new Order();
-            if(request.getType().equals("buy") && request.getPaymentBy().equals("lazuni"))
+            if(request.getType().equals("buy") && request.getPaymentBy().equals("Lazuni"))
                 balanceFluctuationService.createBalanceFluctuation(request.getBuyerId(),"-",request.getTotal(),"Thanh toán giao dịch-"+order.getOrderId());
             List<OrderDetail> orderDetails =
                     request.getOrderDetails().stream().map(o -> {
@@ -64,7 +64,9 @@ public class OrderService {
         }).collect(Collectors.toList());
     return "Order has been created";
     }
-
+//    public void deleteOrder(String orderId){
+//        orderRepository.deleteById(orderId);
+//    }
     public List<OrderResponse> getAllOrder(){
         return formatListOrder(orderRepository.findAll());
     }
@@ -92,11 +94,11 @@ public class OrderService {
             }
 
         //check user cancle order
-        if(state.equals("cancle")&&order.getPaymentBy().equals("Lazuni"))
+        if(state.equals("failed")&&order.getPaymentBy().equals("Lazuni"))
             balanceFluctuationService.createBalanceFluctuation(order.getBuyer().getUserId(),"+",order.getTotal(),"Hoàn tiền giao dịch bị hủy-"+orderid);
 
         //check success order
-        if(state.equals("successful")&&order.getPaymentBy().equals("Lazuni")){
+        if(state.equals("done")&&order.getPaymentBy().equals("Lazuni")){
             balanceFluctuationService.createBalanceFluctuation(order.getSeller().getUserId(),"+",order.getTotal(),"Thanh toán đơn hàng thành công-"+orderid);
         }
         return orderRepository.save(order);

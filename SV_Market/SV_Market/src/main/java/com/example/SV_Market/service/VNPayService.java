@@ -100,7 +100,7 @@ public class VNPayService {
                 .balance(balance)
                 .content(request.getVnp_OrderInfo())
                 .date(request.getDate())
-                .state(transactionUtil.getType(request.getVnp_ResponseCode()))
+                .state("Nạp tiền thành công")
                 .build();
         paymentRepository.save(balanceFluctuation);
         return userRepository.save(user);

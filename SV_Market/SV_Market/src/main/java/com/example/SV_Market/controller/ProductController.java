@@ -1,6 +1,7 @@
 package com.example.SV_Market.controller;
 
 import com.example.SV_Market.entity.Product;
+import com.example.SV_Market.entity.User;
 import com.example.SV_Market.repository.ProductRepository;
 import com.example.SV_Market.request.ProductCreationRequest;
 import com.example.SV_Market.request.ProductUpdateRequest;
@@ -31,9 +32,15 @@ public class ProductController {
     private ProductRepository productRepository;
 
     @PostMapping()
+    public ResponseEntity<?> createProduct(@ModelAttribute  ProductCreationRequest request){
+        try {
+            Product product = productService.createProduct(request);
+            return ResponseEntity.ok(product); // 200 OK with new product save in database
+        } catch (RuntimeException e) {
+            // Return
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
 
-    Product createProduct(@ModelAttribute  ProductCreationRequest request) throws IOException {
-        return productService.createProduct(request);
     }
 
 
@@ -92,7 +99,7 @@ public class ProductController {
 
     // Update a product
     @PutMapping("/update/{productId}")
-    public ResponseEntity<Product> updateProduct(@PathVariable String productId, @RequestBody ProductUpdateRequest request) {
+    public ResponseEntity<Product> updateProduct(@PathVariable String productId, @ModelAttribute ProductUpdateRequest request) {
         Product updatedProduct = productService.updateProduct(productId, request);
         return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
     }

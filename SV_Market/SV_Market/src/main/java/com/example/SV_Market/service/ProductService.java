@@ -1,11 +1,10 @@
 package com.example.SV_Market.service;
 
-import com.example.SV_Market.entity.Category;
-import com.example.SV_Market.entity.Product;
-import com.example.SV_Market.entity.ProductImage;
-import com.example.SV_Market.entity.User;
+import com.example.SV_Market.entity.*;
+import com.example.SV_Market.repository.UserRepository;
 import com.example.SV_Market.repository.CategoryRepository;
 import com.example.SV_Market.repository.ProductRepository;
+import com.example.SV_Market.repository.UpgradeRepository;
 import com.example.SV_Market.request.ProductCreationRequest;
 import com.example.SV_Market.request.ProductUpdateRequest;
 import com.example.SV_Market.response.*;
@@ -23,7 +22,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -34,6 +32,10 @@ public class ProductService {
     CategoryRepository categoryRepository;
     @Autowired
     ProductRepository productRepository;
+
+    @Autowired
+    UserRepository userRepository;
+
     @Autowired
     UserService userService;
     @Autowired
@@ -42,14 +44,25 @@ public class ProductService {
     CloudinaryService cloudinaryService;
 
 
-    public Product createProduct(ProductCreationRequest request) throws IOException {
+    public Product createProduct(ProductCreationRequest request){
+
         LocalDate currentDate = LocalDate.now();
 
         Product product = new Product();
+        User currentUpgrade = userRepository.findById(request.getUserId()).get();
+
+        // Kiểm tra giới hạn sản phẩm
+        int availableLimit = getProductCreationLimit(currentUpgrade);
+
+        if (availableLimit <= 0) {
+            throw new RuntimeException("Đạt giới hạn sản phẩm");//thong bao khong the tao san pham
+        }
+
+
 
         List<ProductImage> productImages = new ArrayList<>();  // Create an empty list to store the ProductImage objects
 
-            for (String imagePath : cloudinaryService.uploadProductImage(request.getImages())) {  // Iterate over each image path from the request
+        for (String imagePath : cloudinaryService.uploadProductImage(request.getImages())) {  // Iterate over each image path from the request
             ProductImage productImage = new ProductImage();  // Create a new ProductImage object
             productImage.setPath(imagePath);  // Set the image path
             productImage.setProduct(product);  // Associate the image with the product
@@ -100,22 +113,25 @@ public class ProductService {
 
         LocalDate currentDate = LocalDate.now();
 
-        List<ProductImage> productImages = new ArrayList<>();  // Create an empty list to store the ProductImage objects
+
         if (request.getImages() != null) {
-            for (String imagePath : cloudinaryService.uploadProductImage(request.getImages())) {  // Iterate over each image path from the request
-                ProductImage productImage = new ProductImage();  // Create a new ProductImage object
-                productImage.setPath(imagePath);  // Set the image path
-                productImage.setProduct(product);  // Associate the image with the product
-                productImages.add(productImage);  // Add the productImage to the list
+            List<ProductImage> productImages = new ArrayList<>();
+            for (String imagePath : cloudinaryService.uploadProductImage(request.getImages())) {
+                ProductImage productImage = new ProductImage();
+                productImage.setPath(imagePath);
+                productImage.setProduct(product);
+                productImages.add(productImage);
             }
-            product.setImages(productImages);
+            product.getImages().addAll(productImages);  // Append new images rather than overwriting old ones
         }
+
 
         product.setProductName(request.getProductName());
         product.setQuantity(request.getQuantity());
         product.setPrice(request.getPrice());
         product.setDescription(request.getDescription());
         product.setType((request.getType()));
+        product.setCategory(categoryService.getCategory(request.getCategoryId()));
         product.setState(request.getState());
         product.setCreate_at(currentDate);
         return productRepository.save(product);
@@ -126,10 +142,10 @@ public class ProductService {
         return formatListProductResponse(list);
     }
 
-    public Product acceptProduct(SensorProductRequest request) {
+    public ProductResponse acceptProduct(SensorProductRequest request) {
         Product product = getProductById(request.getProductId());
         product.setStatus(request.getStatus());
-        return productRepository.save(product);
+        return formatProductResponse(productRepository.save(product));
     }
 
     //hung viet de giam sl sp
@@ -211,7 +227,8 @@ public class ProductService {
         try {
             Product product = getProductById(productId);
             if (product.getQuantity() == 0 && status.equals("public")) {
-                throw new RuntimeException("Cannot publish a product with zero quantity!");
+                // Return a custom error response with a specific message
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("000: Cannot publish a product with zero quantity!");
             }
             product.setStatus(status);
             Product updatedProduct = productRepository.save(product);
@@ -242,7 +259,9 @@ public class ProductService {
             response.setUser(userResponse);
 
             List<ProductImageResponse> imageResponses = product.getImages().stream().map(image -> {
+
                 ProductImageResponse imageResponse = new ProductImageResponse();
+                imageResponse.setImageId(image.getProductImageId());
                 imageResponse.setPath(image.getPath());
                 return imageResponse;
             }).collect(Collectors.toList());
@@ -254,6 +273,7 @@ public class ProductService {
 
             Category category = product.getCategory();
             CategoryResponse categoryResponse = new CategoryResponse();
+            categoryResponse.setCategoryId((category.getCategoryId()));
             categoryResponse.setTitle(category.getTitle());
             categoryResponse.setDescription(category.getDescription());
             categoryResponse.setImage(category.getImage());
@@ -359,5 +379,23 @@ public class ProductService {
             response.setCreate_at(product.getCreate_at());
             return response;
 
+    }
+
+    private int getProductCreationLimit(User currentUpgrade) {
+        int publicProductCount = productRepository.findProductsByUserIdAndStatus(currentUpgrade.getUserId(), "public").size();
+        int pendingProductCount = productRepository.findProductsByUserIdAndStatus(currentUpgrade.getUserId(), "pending").size();
+        int hiddenProductCount = productRepository.findProductsByUserIdAndStatus(currentUpgrade.getUserId(), "hide").size();
+
+        int totalAvailableProducts = publicProductCount + pendingProductCount + hiddenProductCount;
+        String packageType = currentUpgrade.getRole(); // Assuming the type corresponds to the package name
+        switch (packageType) {
+            case "business":
+                return 40 - totalAvailableProducts; // Limit for business package
+            case "sub-business":
+                return 15 - totalAvailableProducts; // Limit for sub-business package
+
+            default:
+                return 5 - totalAvailableProducts;  // Limit for standard package
+        }
     }
 }

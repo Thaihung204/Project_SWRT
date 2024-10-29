@@ -6,10 +6,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UpgradeRepository extends JpaRepository<Upgrade, String> {
+public interface UpgradeRepository extends JpaRepository<Upgrade, Long> {
     @Query("SELECT p FROM Upgrade p WHERE p.user.userId = :userId ORDER BY p.upgradeId desc limit 1")
     Optional<Upgrade> findLatestByUserID(@Param("userId") String userId);
+
+
 }

@@ -64,8 +64,13 @@ public class UserController {
         }
     }
     @PutMapping("/upgrade")
-    public ResponseEntity<User> upgradeUserRole(@RequestBody UpgradeRequest upgradeRequest) {
-        return ResponseEntity.status(HttpStatus.OK).body(userService.upgradeUserRole(upgradeRequest));
+    public ResponseEntity<?> upgradeUserRole(@RequestBody UpgradeRequest upgradeRequest) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(userService.upgradeUserRole(upgradeRequest));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+
     }
 
 }
