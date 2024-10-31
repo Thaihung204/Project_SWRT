@@ -9,6 +9,9 @@ import com.example.SV_Market.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -68,5 +71,24 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userService.upgradeUserRole(upgradeRequest));
     }
 
+
+    //gan tren ten ng dung khi click vao chat
+    @MessageMapping("/user.addUser")
+    @SendTo("/user/topic")
+    public User addUser(@Payload User user){
+        return userService.saveUser(user);
+    }
+
+    @MessageMapping("/user.disconectUser")
+    @SendTo("/user/topic")
+    public User disconect(@Payload User user){
+        userService.disconect(user);
+        return user;
+    }
+
+    @GetMapping("/onlineUser")
+    public ResponseEntity<List<User>> findConectedUser(){
+        return ResponseEntity.ok(userService.findConectedUsers());
+    }
 }
 

@@ -194,7 +194,9 @@ body {
     width: 100%;
 }
 
-
+.hidden {
+    display: none;
+}
 a.logout {
     color: #fff;
     text-decoration: none;

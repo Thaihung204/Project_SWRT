@@ -63,6 +63,7 @@
         @JsonIgnore
         private List<Notice> notices;
 
+        private Status status;
 //        private boolean accountVerified;
 //        private boolean loginDisabled;
 

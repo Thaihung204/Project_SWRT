@@ -2,10 +2,7 @@ package com.example.SV_Market.service;
 
 import com.example.SV_Market.dto.UserDto;
 import com.example.SV_Market.dto.UserUpdateRequest;
-import com.example.SV_Market.entity.Product;
-import com.example.SV_Market.entity.SubscriptionPackage;
-import com.example.SV_Market.entity.Upgrade;
-import com.example.SV_Market.entity.User;
+import com.example.SV_Market.entity.*;
 
 import com.example.SV_Market.repository.ProductRepository;
 import com.example.SV_Market.repository.SubscriptionPackageRepository;
@@ -72,10 +69,6 @@ public User getUserById(String userId) {
             .orElseThrow(() -> new RuntimeException("User with ID " + userId + " not found!"));
 }
 
-
-    public User saveUser(User user) {
-        return userRepository.save(user);
-    }
 
     public void deleteUser(String userId) {
         userRepository.deleteById(userId);
@@ -189,5 +182,24 @@ public User getUserById(String userId) {
         userResponse.setProfilePicture(user.getProfilePicture());
         return userResponse;
 
+    }
+
+
+    public User saveUser(User user) {
+        user.setStatus(Status.ONLINE);
+        return userRepository.save(user);
+    }
+
+    public void disconect(User user){
+        var storeUser = userRepository.findById(user.getUserId())
+                .orElse(null);
+        if(storeUser != null){
+            storeUser.setStatus(Status.OFFLINE);
+            userRepository.save(storeUser);
+        }
+    }
+
+    public List<User> findConectedUsers(){
+        return userRepository.findAllByStatus(Status.ONLINE);
     }
 }
