@@ -78,7 +78,14 @@ public class ProductService {
 
     }
     public List<ProductResponse> getPublicProductsByUserId(String userId, String status) {
-        return formatListProductResponse(productRepository.findProductsByUserIdAndStatus(userId, status));
+        List<Product> list;
+        if(status.equals("pending")){
+            list = productRepository.findProductsByUserIdAndStatus(userId,status);
+            list.addAll(productRepository.findProductsByUserIdAndStatus(userId,"declined"));
+            return formatListProductResponse(list);
+        } else {
+            return formatListProductResponse(productRepository.findProductsByUserIdAndStatus(userId, status));
+        }
     }
 
 

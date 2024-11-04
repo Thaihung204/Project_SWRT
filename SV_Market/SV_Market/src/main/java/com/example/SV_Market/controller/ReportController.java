@@ -24,6 +24,10 @@ public class ReportController {
 
         return reportService.createReport(request);
     }
+    @PostMapping("/orders")
+    Report createReportOrder(@RequestBody ReportCreationRequest request) {
+        return  reportService.createReportOrder(request);
+    }
 
     //get report theo user
     @GetMapping("/history")

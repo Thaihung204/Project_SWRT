@@ -1,7 +1,7 @@
 package com.example.SV_Market.service;
 
 import com.example.SV_Market.dto.UserDto;
-import com.example.SV_Market.dto.UserUpdateRequest;
+import com.example.SV_Market.request.UserUpdateRequest;
 import com.example.SV_Market.entity.SubscriptionPackage;
 import com.example.SV_Market.entity.Upgrade;
 import com.example.SV_Market.entity.User;
@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
+
 @Service
 public class UserService {
 
@@ -146,4 +146,11 @@ public User getUserById(String userId) {
         }
 
     }
+
+
+
+
+
+
 }
+
