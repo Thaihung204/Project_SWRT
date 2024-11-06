@@ -1,6 +1,5 @@
 package com.example.SV_Market.entity;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,21 +17,21 @@ import java.time.LocalDate;
 public class Upgrade {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "upgrade_id", length = 50)
-    private String upgradeId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "upgrade_id")
+    private long upgradeId;
 
     @ManyToOne
     @JoinColumn(name = "userid", nullable = false, referencedColumnName = "userid")
     private User user;
 
-    @Column(name = "type", length = 50, nullable = false)
-    private String type;
+    @ManyToOne
+    @JoinColumn(name = "subscription_package_id", nullable = false, referencedColumnName = "id")
+    private SubscriptionPackage subscriptionPackage;
 
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
 
     @Column(name = "end_date")
     private LocalDate endDate;
-
 }

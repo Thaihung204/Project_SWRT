@@ -14,7 +14,6 @@ public class ProductUpdateRequest {
 
     protected String productName;
     protected MultipartFile[] images;
-    //    protected List<String> images;
     protected int quantity;
     protected long price;
     protected String description;

@@ -44,7 +44,7 @@ public class Product {
 
     private String type; // sell/exchange/se
     private String state; //new/used
-    private String status; //doiduyet/daduyet-dangban/daduyet-an/fail
+    private String status; //pending/public/hidden
     private LocalDate create_at;
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FeedBack> feedBacks;

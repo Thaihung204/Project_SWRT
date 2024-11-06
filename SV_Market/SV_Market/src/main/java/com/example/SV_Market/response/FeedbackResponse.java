@@ -15,9 +15,10 @@ import java.time.LocalDate;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 
 public class FeedbackResponse {
-
+    private String feedbackId;
     private UserResponse sender;
     private UserResponse receiver;
+
     private int rating;
     private String description;
     private LocalDate createdAt;

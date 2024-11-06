@@ -22,5 +22,6 @@ public class OrderCreationRequest {
     private String sellerId;
     private String buyerId;
     private String paymentBy;
-    private String state;
+    private String total;
+//    private String state;
 }

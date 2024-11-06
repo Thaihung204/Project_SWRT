@@ -15,6 +15,6 @@ import java.util.Date;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 
 public class ProductImageResponse {
-
+    private  String imageId;
     private String path;
 }

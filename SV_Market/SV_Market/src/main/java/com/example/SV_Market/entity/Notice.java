@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -14,23 +15,20 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "category")
-public class Category {
+@Table(name = "notice")
+public class    Notice {
     @Id
-    @Column(name = "category_id")
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String categoryId;
+    private String noticeId;
+
+    @ManyToOne
+    @JoinColumn(name = "userid", nullable = false, referencedColumnName = "userid")
+    private User user;
 
     private String title;
-
     @Column(columnDefinition = "LONGTEXT")
-    private String description;
+    private String content;
 
-//    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
-  private String image;
-    @JsonIgnore
-    @OneToMany(mappedBy = "category")
-    private List<Product> products;
-
+    private LocalDate createAt;
 
 }

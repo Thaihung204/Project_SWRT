@@ -29,15 +29,14 @@ public class OrderDetail {
     @JoinColumn(name = "order_id", nullable = false, referencedColumnName = "order_id")
     private Order order;
 
-    @OneToOne()
+    @ManyToOne()
     @JoinColumn(name = "product_id", nullable = false, referencedColumnName = "product_id")
     private Product product;
 
     private int quantity;
 
-    @OneToOne()
+    @ManyToOne()
     @JoinColumn(name = "product_trade_id", referencedColumnName = "product_id")
     private Product productTrade;
-
 
 }

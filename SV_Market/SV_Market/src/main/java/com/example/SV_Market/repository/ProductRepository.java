@@ -1,7 +1,11 @@
 package com.example.SV_Market.repository;
 
+import com.example.SV_Market.entity.Category;
 import com.example.SV_Market.entity.Product;
 import com.example.SV_Market.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -22,10 +26,17 @@ public interface ProductRepository extends JpaRepository<Product, String> {
 
     //for admin to get product to kiem duyet
     @Query("SELECT u FROM Product u WHERE u.status = :status")
-    Optional<Product> sensor(String status);
+    List<Product> sensor(String status);
+    @Query("SELECT p from Product p WHERE p.user.userId= :userId")
+    List<Product> findAllByUserId(@Param("userId") String userId);
 
     //de hien thi tren trang home
     List<Product> findByStatus(String tatus);
+    List<Product> findByCategory(Category category);
 
+    @Query("SELECT e FROM Product e where e.category.categoryId = :categoryId")
+    Page<Product> productListingByCategoryId(Pageable pageable, String categoryId);
 
+    @Query("SELECT e FROM Product e")
+    Page<Product> productListing(Pageable pageable);
 }

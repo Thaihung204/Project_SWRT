@@ -30,13 +30,13 @@ public class Order {
     private List<OrderDetail> orderDetails;
 
     @Column(name = "type", length = 50, nullable = false)
-    private String type;
+    private String type; //sell / exchange
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @JoinColumn(name = "sell_id", nullable = false, referencedColumnName = "userid")
     private User seller;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @JoinColumn(name = "buy_id", nullable = false, referencedColumnName = "userid")
     private User buyer;
 
@@ -46,7 +46,10 @@ public class Order {
     @Column(name = "state", nullable = false)
     private String state;
 
+    private String total;
+
     @Column(name = "create_at", nullable = false)
     private LocalDate createAt;
+
 
 }

@@ -4,9 +4,13 @@ import com.example.SV_Market.entity.Category;
 import com.example.SV_Market.entity.Order;
 import com.example.SV_Market.request.CategoryCreationRequest;
 import com.example.SV_Market.request.OrderCreationRequest;
+import com.example.SV_Market.response.OrderResponse;
+import com.example.SV_Market.response.ProductResponse;
 import com.example.SV_Market.service.CategoryService;
 import com.example.SV_Market.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,22 +24,51 @@ public class OrderController {
     private OrderService orderService;
 
     @PostMapping()
-    Order createOrder(@RequestBody OrderCreationRequest request){
-        return orderService.createOrder(request);
+    String createOrder(@RequestBody List<OrderCreationRequest> requests){
+
+        return orderService.createOrder(requests);
     }
 
     @GetMapping()
-    List<Order> getAllOrder(){
+    List<OrderResponse> getAllOrder(){
         return orderService.getAllOrder();
     }
 
     @GetMapping("/{orderId}")
-    Order getOrder(@PathVariable String orderId){
-        return orderService.getOrderById(orderId);
+    OrderResponse getOrder(@PathVariable String orderId){
+        return orderService.formatOrder(orderService.getOrderById(orderId));
+    }
+//    @DeleteMapping("/{orderId}")
+//    public ResponseEntity<String> deleteProduct(@PathVariable String orderId) {
+//        orderService.deleteOrder(orderId);
+//        return ResponseEntity.ok("Order has been deleted");
+//    }
+
+    @GetMapping("/receive")
+    public ResponseEntity<List<OrderResponse>> getOrdersBySellerIdAndState(
+            @RequestParam(value = "sell_id", required = false) String sellId,
+            @RequestParam(value = "state", required = false) String state) {
+        List<OrderResponse> orders = orderService.getOrderBySellerIdAndState(sellId,state);
+        return new ResponseEntity<>(orders, HttpStatus.OK);
+        }
+            @GetMapping("/make")
+        public ResponseEntity<List<OrderResponse>> getOrdersByBuyerIdAndState(
+            @RequestParam(value = "buy_id", required = false) String buyId,
+            @RequestParam(value = "state", required = false) String state) {
+        List<OrderResponse> orders = orderService.getOrderByBuyerIdAndState(buyId,state);
+        returaddn new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
-//    @PutMapping("/{productId}")
-//    Product updateProduct(@PathVariable String productId, @RequestBody ProductUpdateRequest request) {
-//        return productService.updateProduct(productId, request);
-//    }
+    @PutMapping()
+    public String updateorder( @RequestParam(value = "orderId", required = false) String orderId,
+                               @RequestParam(value = "state", required = false) String state){
+        orderService.updateOrder(orderId,state);
+        return "Order has been successful";
+    }
+
+    @DeleteMapping("/{orderId}")
+    public String deleteOrder(@PathVariable String orderId){
+    orderService.deleteOrder(orderId);
+    return "Order has been deleted";
+    }
 }
