@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Table(name = "notice")
-public class Notice {
+public class    Notice {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String noticeId;

@@ -42,7 +42,7 @@ public class BalanceFluctuationService {
         userService.getUserById(userId).setBalance(newBalance); // Update the user's balance
         bf.setBalance(newBalance);
         bf.setContent(content);
-        bf.setState("successful");
+        bf.setState("Thành công");
         bf.setDate(LocalDate.now());
         return balanceFluctuationRepository.save(bf);
     }

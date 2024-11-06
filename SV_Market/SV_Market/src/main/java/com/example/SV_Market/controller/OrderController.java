@@ -25,6 +25,7 @@ public class OrderController {
 
     @PostMapping()
     String createOrder(@RequestBody List<OrderCreationRequest> requests){
+
         return orderService.createOrder(requests);
     }
 
@@ -55,14 +56,14 @@ public class OrderController {
             @RequestParam(value = "buy_id", required = false) String buyId,
             @RequestParam(value = "state", required = false) String state) {
         List<OrderResponse> orders = orderService.getOrderByBuyerIdAndState(buyId,state);
-        return new ResponseEntity<>(orders, HttpStatus.OK);
+        returaddn new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
     @PutMapping()
     public String updateorder( @RequestParam(value = "orderId", required = false) String orderId,
                                @RequestParam(value = "state", required = false) String state){
         orderService.updateOrder(orderId,state);
-        return "Order has been ${state} successful";
+        return "Order has been successful";
     }
 
     @DeleteMapping("/{orderId}")

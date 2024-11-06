@@ -66,9 +66,10 @@ public class UserController {
     @PutMapping("/upgrade")
     public ResponseEntity<?> upgradeUserRole(@RequestBody UpgradeRequest upgradeRequest) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(userService.upgradeUserRole(upgradeRequest));
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            userService.upgradeUserRole(upgradeRequest);
+            return ResponseEntity.ok("upgrade account succesfull");
+        } catch (Exception e) {
+            return ResponseEntity.ok("upgrade account fail");
         }
 
     }

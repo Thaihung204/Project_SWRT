@@ -133,6 +133,7 @@ public class ProductService {
         product.setType((request.getType()));
         product.setCategory(categoryService.getCategory(request.getCategoryId()));
         product.setState(request.getState());
+        product.setStatus("pending");
         product.setCreate_at(currentDate);
         return productRepository.save(product);
     }
@@ -183,8 +184,14 @@ public class ProductService {
                     .filter(product -> product.getCategory().getCategoryId().equals(categoryId));
         }
         if (address != null) {
+            log.info(address);
             productsStream = productsStream
-                    .filter(product -> product.getUser().getAddress().contains(address));
+                    .filter(product -> {
+//                        String[] city = address.split("\\s+");
+//                        String temp = city[1] + " " + city[2];
+                        String[] addressParts = userRepository.findById(product.getUser().getUserId()).get().getAddress().split(",");
+                        return addressParts.length > 1 && addressParts[2].trim().toUpperCase().contains(address.toUpperCase());
+                    });
         }
         if (minPrice != null) {
             productsStream = productsStream
@@ -196,7 +203,7 @@ public class ProductService {
         }
         if (productName != null) {
             productsStream = productsStream
-                    .filter(product -> product.getProductName().contains(productName));
+                    .filter(product -> product.getProductName().toUpperCase().contains(productName.toUpperCase()));
         }
         List<Product> filteredProducts = productsStream
                 .filter(product -> product.getStatus().equals("public"))
@@ -251,7 +258,7 @@ public class ProductService {
 
             User user = product.getUser();
             UserResponse userResponse = new UserResponse();
-        userResponse.setUserId(user.getUserId());
+               userResponse.setUserId(user.getUserId());
             userResponse.setUserName(user.getUserName());
             userResponse.setAddress(user.getAddress());
             userResponse.setProfilePicture(user.getProfilePicture());
@@ -313,6 +320,7 @@ public class ProductService {
 
             User user = product.getUser();
             UserResponse userResponse = new UserResponse();
+            userResponse.setUserId(user.getUserId());
             userResponse.setUserName(user.getUserName());
             userResponse.setAddress(user.getAddress());
             userResponse.setProfilePicture(user.getProfilePicture());

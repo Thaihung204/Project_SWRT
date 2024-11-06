@@ -10,6 +10,7 @@ import com.example.SV_Market.request.PaymentRequest;
 import com.example.SV_Market.request.TransactionRequest;
 import com.example.SV_Market.utils.TransactionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
@@ -110,7 +111,7 @@ public class VNPayService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
     public List<BalanceFluctuation> getBalanceFluctuationList(String userId){
-         return paymentRepository.findByUserId(userId);
+        return paymentRepository.findByUserId(userId, Sort.by(Sort.Direction.DESC, "date"));
 
     }
 }
