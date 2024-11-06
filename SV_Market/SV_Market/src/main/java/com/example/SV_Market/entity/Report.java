@@ -29,7 +29,7 @@ public class Report {
     private String description;
     private String state;
     private String responseMessage;
-    @OneToMany(mappedBy = "report", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "report")
     private List<ReportImage> images;
     @ManyToOne
     @JoinColumn(name = "order_id", nullable = false, referencedColumnName = "order_id")

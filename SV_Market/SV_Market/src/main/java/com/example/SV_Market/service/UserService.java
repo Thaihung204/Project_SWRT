@@ -1,7 +1,7 @@
 package com.example.SV_Market.service;
 
 import com.example.SV_Market.dto.UserDto;
-import com.example.SV_Market.dto.UserUpdateRequest;
+import com.example.SV_Market.request.UserUpdateRequest;
 import com.example.SV_Market.entity.BalanceFluctuation;
 import com.example.SV_Market.entity.Product;
 import com.example.SV_Market.entity.SubscriptionPackage;

@@ -49,6 +49,7 @@ public class ReportService {
         report.setDescription(request.getDescription());
         report.setState(request.getState());
         report.setResponseMessage(" ");
+        report.setOrder(orderService.getOrderById("0"));
 
 
 
@@ -88,11 +89,67 @@ public class ReportService {
     }
 
 
-    public List<ReportResponse> viewHistoryReport(String userId) {
+    public List<ReportResponse> viewHistoryProductReportUser(String userId) {
         List<Report> reports = reportRepository.findByUser_UserId(userId);
 
         // Sử dụng Stream API để chuyển đổi danh sách Report sang ReportResponse
-        return reports.stream().map(report -> {
+        return reports.stream()
+            .filter(report -> report.getOrder().getOrderId().equals("0")) 
+            .map(report -> {
+                ReportResponse response = new ReportResponse();
+                response.setTitle(report.getTitle());
+                response.setDescription(report.getDescription());
+                response.setState(report.getState());
+                response.setResponseMessage(report.getResponseMessage());
+                response.setUserName(report.getUser().getUserName());
+                response.setUserId(report.getUser().getUserId());
+                response.setProductName(report.getProduct().getProductName());  // Lấy tên sản phẩm từ product
+                response.setProductId(report.getProduct().getProductId());
+
+                List<ProductImageResponse> imageResponses = report.getProduct().getImages().stream().map(image -> {
+                    ProductImageResponse imageResponse = new ProductImageResponse();
+                    imageResponse.setPath(image.getPath());
+                    return imageResponse;
+                }).collect(Collectors.toList());
+
+                return response;
+            }).collect(Collectors.toList());
+    }
+
+    public List<ReportResponse> getReporProducttByStateAdmin(String state){
+        List<Report> reports = reportRepository.getReportbyState(state);
+        return reports.stream()
+            .filter(report -> report.getOrder().getOrderId().equals("0")) 
+            .map(report -> {
+                ReportResponse response = new ReportResponse();
+                response.setTitle(report.getTitle());
+                response.setDescription(report.getDescription());
+                response.setState(report.getState());
+                response.setResponseMessage(report.getResponseMessage());
+                response.setUserName(report.getUser().getUserName());
+                response.setUserId(report.getUser().getUserId());
+                response.setProductName(report.getProduct().getProductName());  // Lấy tên sản phẩm từ product
+                response.setProductId(report.getProduct().getProductId());
+
+                List<ProductImageResponse> imageResponses = report.getProduct().getImages().stream().map(image -> {
+                    ProductImageResponse imageResponse = new ProductImageResponse();
+                    imageResponse.setPath(image.getPath());
+                    return imageResponse;
+            }).collect(Collectors.toList());
+
+
+            return response;
+        }).collect(Collectors.toList());
+    }
+
+
+
+    public List<ReportResponse> viewHistoryOrderReportUser(String userId) {
+        List<Report> reports = reportRepository.findByUser_UserId(userId);
+
+        // Sử dụng Stream API để chuyển đổi danh sách Report sang ReportResponse
+        return reports.stream().filter(report -> report.getProduct().getProductId().equals("0"))
+                .map(report -> {
             ReportResponse response = new ReportResponse();
             response.setTitle(report.getTitle());
             response.setDescription(report.getDescription());
@@ -100,29 +157,46 @@ public class ReportService {
             response.setResponseMessage(report.getResponseMessage());
             response.setUserName(report.getUser().getUserName());
             response.setUserId(report.getUser().getUserId());
-            response.setProductName(report.getProduct().getProductName());  // Lấy tên sản phẩm từ product
-            response.setProductId(report.getProduct().getProductId());
+            response.setOrderId(report.getOrder().getOrderId());
+
+            List<ProductImageResponse> imageResponses = report.getProduct().getImages().stream().map(image -> {
+                ProductImageResponse imageResponse = new ProductImageResponse();
+                imageResponse.setPath(image.getPath());
+                return imageResponse;
+            }).collect(Collectors.toList());
+
             return response;
         }).collect(Collectors.toList());
     }
 
-    public List<ReportResponse> getReportByState(String state){
+
+    public List<ReportResponse> getReportOrderByStateAdmin(String state){
         List<Report> reports = reportRepository.getReportbyState(state);
-        return reports.stream().map(report -> {
+        return reports.stream().filter(report -> report.getProduct().getProductId().equals("0"))
+                .map(report -> {
             ReportResponse response = new ReportResponse();
             response.setReportId(report.getReportId());
             response.setTitle(report.getTitle());
-            response.setProductName(report.getProduct().getProductName());
-            response.setProductId(report.getProduct().getProductId());
+//            response.setProductName(report.getProduct().getProductName());
+//            response.setProductId(report.getProduct().getProductId());
+            response.setOrderId(report.getOrder().getOrderId());
             response.setUserName(report.getUser().getUserName());
             response.setUserId(report.getUser().getUserId());
             response.setState(report.getState());
             response.setDescription(report.getDescription());
             response.setResponseMessage(report.getResponseMessage());
 
+            List<ProductImageResponse> imageResponses = report.getProduct().getImages().stream().map(image -> {
+                ProductImageResponse imageResponse = new ProductImageResponse();
+                imageResponse.setPath(image.getPath());
+                return imageResponse;
+            }).collect(Collectors.toList());
+
+
             return response;
         }).collect(Collectors.toList());
     }
+
 
 
     public Report answerReport(String reportId, String responseMessage) {
