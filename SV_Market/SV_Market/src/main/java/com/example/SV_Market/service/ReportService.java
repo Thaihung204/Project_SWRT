@@ -30,6 +30,12 @@ public class ReportService {
     CloudinaryService cloudinaryService;
 
 
+    public Report getReportById(String id) {
+        return reportRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+    }
+
+
     public Report createReport(@RequestBody ReportCreationRequest request) {
         Report report = new Report();
 

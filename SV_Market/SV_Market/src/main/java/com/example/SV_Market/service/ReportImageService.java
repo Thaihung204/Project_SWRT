@@ -5,6 +5,8 @@ import com.example.SV_Market.entity.ProductImage;
 import com.example.SV_Market.entity.Report;
 import com.example.SV_Market.entity.ReportImage;
 import com.example.SV_Market.repository.ReportImageRepository;
+import com.example.SV_Market.request.ProductImageCreationRequest;
+import com.example.SV_Market.request.ReportImageCreationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,17 +18,17 @@ public class ReportImageService {
 
     @Autowired
     ReportImageRepository reportImageRepository;
+    @Autowired
+    CloudinaryService cloudinaryService;
+    @Autowired
+    ReportService reportService;
+    public ReportImage createReportImage(ReportImageCreationRequest request){
+        String imagePath = cloudinaryService.upload(request.getImage());  // Iterate over each image path from the request
+        ReportImage reportImage = new ReportImage();  // Create a new ProductImage object
+        reportImage.setPath(imagePath);  // Set the image path
+        reportImage.setReport(reportService.getReportById(request.getReportId()));  // Associate the image with the product
 
-    public List<ReportImage> createReportImage(Report report, List<String> images) {
-        List<ReportImage> imagesReturn = new ArrayList<>();
-        for(String image : images) {
-            ReportImage reportImage = new ReportImage();
-            reportImage.setReport(report);
-            reportImage.setPath(image);
-            imagesReturn.add(reportImage);
-            reportImageRepository.save(reportImage);
-        }
-        return imagesReturn;
+        return reportImageRepository.save(reportImage);
     }
 
 

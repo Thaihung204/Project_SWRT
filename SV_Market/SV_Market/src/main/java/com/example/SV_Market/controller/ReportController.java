@@ -19,7 +19,7 @@ public class ReportController {
     @Autowired
     private ReportService reportService;
 
-    @PostMapping()
+    @PostMapping("/products")
     Report createReport(@RequestBody ReportCreationRequest request) {
 
         return reportService.createReport(request);
