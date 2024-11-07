@@ -56,7 +56,7 @@ public class OrderController {
             @RequestParam(value = "buy_id", required = false) String buyId,
             @RequestParam(value = "state", required = false) String state) {
         List<OrderResponse> orders = orderService.getOrderByBuyerIdAndState(buyId,state);
-        returaddn new ResponseEntity<>(orders, HttpStatus.OK);
+        return new ResponseEntity<>(orders, HttpStatus.OK);
     }
 
     @PutMapping()
