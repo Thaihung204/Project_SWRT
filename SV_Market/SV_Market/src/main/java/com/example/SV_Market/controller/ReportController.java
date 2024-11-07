@@ -20,13 +20,14 @@ public class ReportController {
     private ReportService reportService;
 
     @PostMapping("/products")
-    Report createReport(@RequestBody ReportCreationRequest request) {
-
-        return reportService.createReport(request);
+    ResponseEntity<String> createReport(@ModelAttribute ReportCreationRequest request) {
+        reportService.createReport(request);
+        return ResponseEntity.ok("succesfull");
     }
     @PostMapping("/orders")
-    Report createReportOrder(@RequestBody ReportCreationRequest request) {
-        return  reportService.createReportOrder(request);
+    ResponseEntity<String>  createReportOrder(@ModelAttribute ReportCreationRequest request) {
+          reportService.createReportOrder(request);
+        return ResponseEntity.ok("succesfull");
     }
 
     //get report theo user

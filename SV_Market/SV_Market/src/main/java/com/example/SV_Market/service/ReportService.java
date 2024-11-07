@@ -9,6 +9,7 @@ import com.example.SV_Market.response.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.example.SV_Market.request.ReportCreationRequest;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
@@ -36,16 +37,17 @@ public class ReportService {
     }
 
 
-    public Report createReport(@RequestBody ReportCreationRequest request) {
+    public Report createReport(ReportCreationRequest request) {
         Report report = new Report();
 
-        List<ReportImage> reportImages = new ArrayList<>();  // Create an empty list to store the ProductImage objects
+        List<ReportImage> reportImages = new ArrayList<>();  // Create an empty list to store the ReportImage objects
 
-        for (String imagePath : cloudinaryService.uploadProductImage(request.getImages())) {  // Iterate over each image path from the request
-            ReportImage reportImage = new ReportImage();  // Create a new ProductImage object
+        // Iterate over each image path from the request
+        for (String imagePath : cloudinaryService.uploadProductImage(request.getImages())) {
+            ReportImage reportImage = new ReportImage();  // Create a new ReportImage object
             reportImage.setPath(imagePath);  // Set the image path
-            reportImage.setReport(report);  // Associate the image with the product
-            reportImages.add(reportImage);  // Add the productImage to the list
+            reportImage.setReport(report);  // Associate the image with the report
+            reportImages.add(reportImage);  // Add the ReportImage to the list
         }
 
         report.setUser(userService.getUserById(request.getUserId()));
@@ -57,12 +59,11 @@ public class ReportService {
         report.setResponseMessage(" ");
         report.setOrder(orderService.getOrderById("0"));
 
-
-
         return reportRepository.save(report);
     }
 
-    public  Report createReportOrder (@RequestBody  ReportCreationRequest request) {
+
+    public  Report createReportOrder (  ReportCreationRequest request) {
 
 
 
