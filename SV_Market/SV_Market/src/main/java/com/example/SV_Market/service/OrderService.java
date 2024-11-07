@@ -39,7 +39,7 @@ public class OrderService {
         requests.stream().map(request -> {
 
             Order order = new Order();
-            if(request.getType().equals("buy") && request.getPaymentBy().equals("Lazuni"))
+            if(request.getType().equals("buy") && request.getPaymentBy().equals("lazuni"))
                 balanceFluctuationService.createBalanceFluctuation(request.getBuyerId(),"-",request.getTotal(),"Thanh toán giao dịch-"+order.getOrderId());
             List<OrderDetail> orderDetails =
                     request.getOrderDetails().stream().map(o -> {
@@ -64,9 +64,7 @@ public class OrderService {
         }).collect(Collectors.toList());
     return "Order has been created";
     }
-//    public void deleteOrder(String orderId){
-//        orderRepository.deleteById(orderId);
-//    }
+
     public List<OrderResponse> getAllOrder(){
         return formatListOrder(orderRepository.findAll());
     }
@@ -94,18 +92,36 @@ public class OrderService {
             }
 
         //check user cancle order
-        if(state.equals("failed")&&order.getPaymentBy().equals("Lazuni"))
+        if(state.equals("cancle")&&order.getPaymentBy().equals("Lazuni"))
             balanceFluctuationService.createBalanceFluctuation(order.getBuyer().getUserId(),"+",order.getTotal(),"Hoàn tiền giao dịch bị hủy-"+orderid);
 
         //check success order
-        if(state.equals("done")&&order.getPaymentBy().equals("Lazuni")){
-            balanceFluctuationService.createBalanceFluctuation(order.getSeller().getUserId(),"+",order.getTotal(),"Thanh toán đơn hàng thành công-"+orderid);
-        }
+
         return orderRepository.save(order);
     }
+
+    //confirm order for 2 user
+    public Order confirmOrder(String orderid, String userid) {
+        Order order = getOrderById(orderid);
+
+        if (order.getConfirm() == null && order.getSeller().getUserId().equals(userid))
+            order.setConfirm(order.getSeller().getUserId());
+        else if(order.getConfirm() != null && order.getBuyer().getUserId().equals(userid)) {
+            String confirm = order.getConfirm();
+            order.setOrderId(confirm + "," + order.getBuyer().getUserId());
+            if (order.getPaymentBy().equals("Lazuni")) {
+                balanceFluctuationService.createBalanceFluctuation(order.getSeller().getUserId(), "+", order.getTotal(), "Thanh toán đơn hàng thành công-" + orderid);
+                updateOrder(orderid,"successful");
+            }
+        }
+        else throw new RuntimeException();
+    return orderRepository.save(order);
+    }
+
     public void deleteOrder(String orderid){
         orderRepository.deleteById(orderid);
     }
+
     public List<OrderResponse> formatListOrder(List<Order> orders){
         return  orders.stream().map(order -> {
             OrderResponse response = new OrderResponse();

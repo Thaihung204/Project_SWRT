@@ -60,10 +60,17 @@ public class OrderController {
     }
 
     @PutMapping()
-    public String updateorder( @RequestParam(value = "orderId", required = false) String orderId,
+    public String updateOrder( @RequestParam(value = "orderId", required = false) String orderId,
                                @RequestParam(value = "state", required = false) String state){
         orderService.updateOrder(orderId,state);
         return "Order has been successful";
+    }
+
+    @PutMapping()
+    public String confirmOrder(@RequestParam(value = "orderId", required = false) String orderId,
+                               @RequestParam(value = "userId", required = false) String userId){
+        orderService.confirmOrder(orderId,userId);
+        return "Order has been confirm successful";
     }
 
     @DeleteMapping("/{orderId}")
