@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 
 @Data
 @AllArgsConstructor
@@ -18,9 +20,12 @@ public class ReportResponse {
     private String description;
     private String state;
     private String userName;
+    private String userId;
     private String productName;  // Tên sản phẩm được lấy từ Product
+    private String productId;
     private String responseMessage;
-
+    private List<ReportImageRespone> images;
+    private  String orderId;
 
 
 

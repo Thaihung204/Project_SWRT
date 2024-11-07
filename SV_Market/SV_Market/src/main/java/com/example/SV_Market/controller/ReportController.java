@@ -19,27 +19,44 @@ public class ReportController {
     @Autowired
     private ReportService reportService;
 
-    @PostMapping()
+    @PostMapping("/products")
     Report createReport(@RequestBody ReportCreationRequest request) {
 
         return reportService.createReport(request);
     }
+    @PostMapping("/orders")
+    Report createReportOrder(@RequestBody ReportCreationRequest request) {
+        return  reportService.createReportOrder(request);
+    }
 
     //get report theo user
-    @GetMapping("/history")
+    @GetMapping("/product_history")
     public ResponseEntity<List<ReportResponse>> viewHistoryReport(@RequestParam(value = "userId", required = false) String userId) {
-        List<ReportResponse> reportHistory = reportService.viewHistoryReport(userId);
+        List<ReportResponse> reportHistory = reportService.viewHistoryProductReportUser(userId);
         return ResponseEntity.ok(reportHistory); // Trả về danh sách các report cùng với productName
     }
 
-    @GetMapping("/admin/history")
+    @GetMapping("/order_history")
+    public ResponseEntity<List<ReportResponse>> viewHistoryOrderReport(@RequestParam(value = "userId", required = false) String userId) {
+        List<ReportResponse> reportHistory = reportService.viewHistoryOrderReportUser(userId);
+        return ResponseEntity.ok(reportHistory); // Trả về danh sách các report cùng với productName
+    }
+
+    @GetMapping("/admin/product_history")
 //    public List<ReportResponse> getReportByState() {
 //        return reportService.getReportByState("Chưa giải quyết");
 //    }
     public ResponseEntity<?> getReportByState() {
-        return ResponseEntity.status(HttpStatus.OK).body(reportService.getReportByState("pending"));
+        return ResponseEntity.status(HttpStatus.OK).body(reportService.getReporProducttByStateAdmin("pending"));
     }
 
+
+
+
+    @GetMapping("/admin/order_history")
+    public ResponseEntity<?> getReportOrderByState() {
+        return ResponseEntity.status(HttpStatus.OK).body(reportService.getReportOrderByStateAdmin("pending"));
+    }
 
 
     @PostMapping("/answerReport")

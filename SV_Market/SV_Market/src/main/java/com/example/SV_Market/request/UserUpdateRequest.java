@@ -1,4 +1,4 @@
-package com.example.SV_Market.dto;
+package com.example.SV_Market.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
