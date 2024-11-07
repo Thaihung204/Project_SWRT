@@ -39,4 +39,6 @@ public interface ProductRepository extends JpaRepository<Product, String> {
 
     @Query("SELECT e FROM Product e")
     Page<Product> productListing(Pageable pageable);
+    @Query("SELECT COUNT(p) FROM Product p WHERE MONTH(p.create_at) = :month AND YEAR(p.create_at) = :year")
+    int countProductsUploadedByMonth(@Param("month") int month, @Param("year") int year);
 }
