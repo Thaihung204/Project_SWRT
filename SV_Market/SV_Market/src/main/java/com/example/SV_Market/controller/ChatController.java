@@ -2,12 +2,9 @@ package com.example.SV_Market.controller;
 
 import com.example.SV_Market.entity.ChatMessage;
 import com.example.SV_Market.entity.ChatNotification;
-import com.example.SV_Market.entity.Message;
-import com.example.SV_Market.entity.User;
-import com.example.SV_Market.request.MessageRequest;
+
 import com.example.SV_Market.service.ChatMessageService;
-import com.example.SV_Market.service.MessageService;
-import com.example.SV_Market.service.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;

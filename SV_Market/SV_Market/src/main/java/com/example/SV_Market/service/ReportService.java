@@ -140,7 +140,7 @@ public class ReportService {
                 response.setUserId(report.getUser().getUserId());
                 response.setProductName(report.getProduct().getProductName());  // Lấy tên sản phẩm từ product
                 response.setProductId(report.getProduct().getProductId());
-
+                  response.setReportId(report.getReportId());
                 List<ReportImageRespone> imageResponses = report.getImages().stream()
                         .map(image -> {
                             ReportImageRespone imageResponse = new ReportImageRespone();
@@ -173,13 +173,15 @@ public class ReportService {
             response.setUserId(report.getUser().getUserId());
             response.setOrderId(report.getOrder().getOrderId());
 
-            List<ProductImageResponse> imageResponses = report.getProduct().getImages().stream().map(image -> {
-                ProductImageResponse imageResponse = new ProductImageResponse();
-                imageResponse.setPath(image.getPath());
-                return imageResponse;
-            }).collect(Collectors.toList());
+                    List<ReportImageRespone> imageResponses = report.getImages().stream()
+                            .map(image -> {
+                                ReportImageRespone imageResponse = new ReportImageRespone();
+                                imageResponse.setPath(image.getPath());
+                                return imageResponse;
+                            }).collect(Collectors.toList());
+                    response.setImages(imageResponses);
 
-            return response;
+                    return response;
         }).collect(Collectors.toList());
     }
 
@@ -197,14 +199,17 @@ public class ReportService {
             response.setUserName(report.getUser().getUserName());
             response.setUserId(report.getUser().getUserId());
             response.setState(report.getState());
+            response.setOrder(report.getOrder());
             response.setDescription(report.getDescription());
             response.setResponseMessage(report.getResponseMessage());
-
-            List<ProductImageResponse> imageResponses = report.getProduct().getImages().stream().map(image -> {
-                ProductImageResponse imageResponse = new ProductImageResponse();
-                imageResponse.setPath(image.getPath());
-                return imageResponse;
-            }).collect(Collectors.toList());
+                    response.setOrderId(report.getOrder().getOrderId());
+                    List<ReportImageRespone> imageResponses = report.getImages().stream()
+                            .map(image -> {
+                                ReportImageRespone imageResponse = new ReportImageRespone();
+                                imageResponse.setPath(image.getPath());
+                                return imageResponse;
+                            }).collect(Collectors.toList());
+                    response.setImages(imageResponses);
 
 
             return response;

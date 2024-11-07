@@ -66,7 +66,7 @@ public class OrderController {
         return "Order has been successful";
     }
 
-    @PutMapping()
+    @PutMapping("/confirm")
     public String confirmOrder(@RequestParam(value = "orderId", required = false) String orderId,
                                @RequestParam(value = "userId", required = false) String userId){
         orderService.confirmOrder(orderId,userId);

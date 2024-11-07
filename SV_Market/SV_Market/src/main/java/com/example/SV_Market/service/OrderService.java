@@ -39,7 +39,7 @@ public class OrderService {
         requests.stream().map(request -> {
 
             Order order = new Order();
-            if(request.getType().equals("buy") && request.getPaymentBy().equals("lazuni"))
+            if(request.getType().equals("buy") && request.getPaymentBy().equals("Lazuni"))
                 balanceFluctuationService.createBalanceFluctuation(request.getBuyerId(),"-",request.getTotal(),"Thanh toán giao dịch-"+order.getOrderId());
             List<OrderDetail> orderDetails =
                     request.getOrderDetails().stream().map(o -> {
@@ -104,19 +104,30 @@ public class OrderService {
     public Order confirmOrder(String orderid, String userid) {
         Order order = getOrderById(orderid);
 
-        if (order.getConfirm() == null && order.getSeller().getUserId().equals(userid))
+        // If confirm is null and seller is the one confirming
+        if (order.getConfirm() == null && order.getSeller().getUserId().equals(userid)) {
             order.setConfirm(order.getSeller().getUserId());
-        else if(order.getConfirm() != null && order.getBuyer().getUserId().equals(userid)) {
+        }
+        // If confirm is not null and buyer is the one confirming
+        else if (order.getConfirm() != null && order.getBuyer().getUserId().equals(userid)) {
+            // Append the new userId to the existing confirm string
             String confirm = order.getConfirm();
-            order.setOrderId(confirm + "," + order.getBuyer().getUserId());
+            order.setConfirm(confirm + "," + order.getBuyer().getUserId());
+            updateOrder(orderid, "successful");
+
             if (order.getPaymentBy().equals("Lazuni")) {
                 balanceFluctuationService.createBalanceFluctuation(order.getSeller().getUserId(), "+", order.getTotal(), "Thanh toán đơn hàng thành công-" + orderid);
-                updateOrder(orderid,"successful");
+                updateOrder(orderid, "successful");
             }
+        } else {
+            // If neither condition matches, throw an exception
+            throw new RuntimeException("Invalid action: Only the seller or buyer can confirm the order.");
         }
-        else throw new RuntimeException();
-    return orderRepository.save(order);
+
+        // Save the updated order
+        return orderRepository.save(order);
     }
+
 
     public void deleteOrder(String orderid){
         orderRepository.deleteById(orderid);
@@ -145,6 +156,7 @@ public class OrderService {
             response.setTotal(order.getTotal());
             response.setCreateAt(order.getCreateAt());
             response.setTotal(order.getTotal());
+            response.setConfirm(order.getConfirm());
             return response;
         }).collect(Collectors.toList());
     }
@@ -172,6 +184,7 @@ public class OrderService {
             response.setTotal(order.getTotal());
             response.setCreateAt(order.getCreateAt());
             response.setTotal(order.getTotal());
+            response.setConfirm(order.getConfirm());
             return response;
 
     }

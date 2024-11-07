@@ -44,9 +44,7 @@ public class ReportController {
     }
 
     @GetMapping("/admin/product_history")
-//    public List<ReportResponse> getReportByState() {
-//        return reportService.getReportByState("Chưa giải quyết");
-//    }
+
     public ResponseEntity<?> getReportByState() {
         return ResponseEntity.status(HttpStatus.OK).body(reportService.getReporProducttByStateAdmin("pending"));
     }

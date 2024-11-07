@@ -1,5 +1,6 @@
 package com.example.SV_Market.response;
 
+import com.example.SV_Market.entity.Order;
 import com.example.SV_Market.entity.Product;
 import com.example.SV_Market.entity.User;
 import lombok.AllArgsConstructor;
@@ -26,7 +27,7 @@ public class ReportResponse {
     private String responseMessage;
     private List<ReportImageRespone> images;
     private  String orderId;
-
+     private Order order;
 
 
 }
