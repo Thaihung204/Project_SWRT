@@ -17,4 +17,6 @@ public interface ReportRepository  extends JpaRepository<Report, String> {
 
     @Query("SELECT r FROM Report r WHERE r.state = :state")
     List<Report> getReportbyState(String state);
+
+    Optional<Report> findById(String reportId);
 }

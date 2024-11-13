@@ -35,10 +35,10 @@ public class ProductController {
     public ResponseEntity<?> createProduct(@ModelAttribute  ProductCreationRequest request){
         try {
             Product product = productService.createProduct(request);
-            return ResponseEntity.ok(product); // 200 OK with new product save in database
+            return ResponseEntity.ok("Tạo sản phẩm thành công"); // 200 OK with new product save in database
         } catch (RuntimeException e) {
             // Return
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.ok("Bạn không thể tạo thêm sản phẩm vui lòng nâng cấp gói");
         }
 
     }

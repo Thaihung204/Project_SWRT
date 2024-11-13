@@ -43,6 +43,7 @@ public class Order {
     @Column(name = "payment_by", nullable = false)
     private String paymentBy;
 
+    private String confirm;
     @Column(name = "state", nullable = false)
     private String state;
 

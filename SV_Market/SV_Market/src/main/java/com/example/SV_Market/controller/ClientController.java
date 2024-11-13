@@ -1,7 +1,7 @@
 package com.example.SV_Market.controller;
 
 import com.example.SV_Market.dto.UserDto;
-import com.example.SV_Market.dto.UserUpdateRequest;
+import com.example.SV_Market.request.UserUpdateRequest;
 import com.example.SV_Market.dto.sdi.ClientSdi;
 import com.example.SV_Market.entity.User;
 import com.example.SV_Market.service.ClientService;

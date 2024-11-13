@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.awt.*;
+import java.util.List;
+
 @Entity
 @Data
 @AllArgsConstructor
@@ -26,6 +29,12 @@ public class Report {
     private String description;
     private String state;
     private String responseMessage;
+    @OneToMany(mappedBy = "report", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
+    private List<ReportImage> images;
+
+    @ManyToOne
+    @JoinColumn(name = "order_id", nullable = false, referencedColumnName = "order_id")
+    private Order order;
 
 
 }

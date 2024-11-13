@@ -17,7 +17,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
+//@JsonInclude(JsonInclude.Include.NON_NULL)
 
 public class OrderResponse {
 
@@ -30,4 +30,5 @@ public class OrderResponse {
     private String state;
     private LocalDate createAt;
     private String total;
+    private String confirm;
 }

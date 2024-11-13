@@ -1,7 +1,7 @@
 package com.example.SV_Market.service;
 
 import com.example.SV_Market.dto.UserDto;
-import com.example.SV_Market.dto.UserUpdateRequest;
+import com.example.SV_Market.request.UserUpdateRequest;
 import com.example.SV_Market.entity.BalanceFluctuation;
 import com.example.SV_Market.entity.Product;
 import com.example.SV_Market.entity.SubscriptionPackage;
@@ -147,9 +147,12 @@ public User getUserById(String userId) {
                 .orElseThrow(() -> new RuntimeException("Package not found"));
     }
     @Transactional
-    public User upgradeUserRole(UpgradeRequest request) {
+    public User upgradeUserRole(UpgradeRequest request) throws Exception {
         User user = getUserById(request.getUserId());
         SubscriptionPackage subscriptionPackage = getPackage(request.getPackageId());
+        if (user.getRole().equals("admin")) {
+            throw new Exception("Can't upgrade account");
+        }
 
         if (user.getBalance() >= subscriptionPackage.getPrice()) {
             user.setBalance(user.getBalance() - subscriptionPackage.getPrice());
@@ -182,7 +185,7 @@ public User getUserById(String userId) {
                     .balance(user.getBalance())
                     .content(" Upgrade to " + subscriptionPackage.getRoleName())
                     .date(LocalDate.now())
-                    .state("Giao dịch thành công")
+                    .state("Nâng cấp tài khoản thành công")
                     .build();
 
             paymentRepository.save(balanceFluctuation);
@@ -225,6 +228,7 @@ public User getUserById(String userId) {
         userResponse.setUserName(user.getUserName());
         userResponse.setAddress(user.getAddress());
         userResponse.setProfilePicture(user.getProfilePicture());
+        userResponse.setPhoneNum(user.getPhoneNum());
         return userResponse;
 
     }

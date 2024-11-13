@@ -1,7 +1,7 @@
 package com.example.SV_Market.controller;
 
 import com.example.SV_Market.dto.UserDto;
-import com.example.SV_Market.dto.UserUpdateRequest;
+import com.example.SV_Market.request.UserUpdateRequest;
 import com.example.SV_Market.entity.User;
 import com.example.SV_Market.request.LoginRequest;
 import com.example.SV_Market.request.UpgradeRequest;
@@ -9,6 +9,9 @@ import com.example.SV_Market.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -66,12 +69,25 @@ public class UserController {
     @PutMapping("/upgrade")
     public ResponseEntity<?> upgradeUserRole(@RequestBody UpgradeRequest upgradeRequest) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(userService.upgradeUserRole(upgradeRequest));
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            userService.upgradeUserRole(upgradeRequest);
+            return ResponseEntity.ok("upgrade account succesfull");
+        } catch (Exception e) {
+            return ResponseEntity.ok("upgrade account fail");
         }
 
     }
+
+
+    @MessageMapping("/chatuser.addUser")
+    @SendTo("/user/public")
+    public User addUser(
+            @Payload User user
+    ) {
+        userService.saveUser(user);
+        return user;
+    }
+
+
 
 }
 

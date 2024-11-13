@@ -19,27 +19,43 @@ public class ReportController {
     @Autowired
     private ReportService reportService;
 
-    @PostMapping()
-    Report createReport(@RequestBody ReportCreationRequest request) {
-
-        return reportService.createReport(request);
+    @PostMapping("/products")
+    ResponseEntity<String> createReport(@ModelAttribute ReportCreationRequest request) {
+        reportService.createReport(request);
+        return ResponseEntity.ok("succesfull");
+    }
+    @PostMapping("/orders")
+    ResponseEntity<String>  createReportOrder(@ModelAttribute ReportCreationRequest request) {
+          reportService.createReportOrder(request);
+        return ResponseEntity.ok("succesfull");
     }
 
     //get report theo user
-    @GetMapping("/history")
+    @GetMapping("/product_history")
     public ResponseEntity<List<ReportResponse>> viewHistoryReport(@RequestParam(value = "userId", required = false) String userId) {
-        List<ReportResponse> reportHistory = reportService.viewHistoryReport(userId);
+        List<ReportResponse> reportHistory = reportService.viewHistoryProductReportUser(userId);
         return ResponseEntity.ok(reportHistory); // Trả về danh sách các report cùng với productName
     }
 
-    @GetMapping("/admin/history")
-//    public List<ReportResponse> getReportByState() {
-//        return reportService.getReportByState("Chưa giải quyết");
-//    }
-    public ResponseEntity<?> getReportByState() {
-        return ResponseEntity.status(HttpStatus.OK).body(reportService.getReportByState("pending"));
+    @GetMapping("/order_history")
+    public ResponseEntity<List<ReportResponse>> viewHistoryOrderReport(@RequestParam(value = "userId", required = false) String userId) {
+        List<ReportResponse> reportHistory = reportService.viewHistoryOrderReportUser(userId);
+        return ResponseEntity.ok(reportHistory); // Trả về danh sách các report cùng với productName
     }
 
+    @GetMapping("/admin/product_history")
+
+    public ResponseEntity<?> getReportByState() {
+        return ResponseEntity.status(HttpStatus.OK).body(reportService.getReporProducttByStateAdmin("pending"));
+    }
+
+
+
+
+    @GetMapping("/admin/order_history")
+    public ResponseEntity<?> getReportOrderByState() {
+        return ResponseEntity.status(HttpStatus.OK).body(reportService.getReportOrderByStateAdmin("pending"));
+    }
 
 
     @PostMapping("/answerReport")

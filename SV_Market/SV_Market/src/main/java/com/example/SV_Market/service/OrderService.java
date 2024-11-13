@@ -64,9 +64,7 @@ public class OrderService {
         }).collect(Collectors.toList());
     return "Order has been created";
     }
-//    public void deleteOrder(String orderId){
-//        orderRepository.deleteById(orderId);
-//    }
+
     public List<OrderResponse> getAllOrder(){
         return formatListOrder(orderRepository.findAll());
     }
@@ -94,18 +92,47 @@ public class OrderService {
             }
 
         //check user cancle order
-        if(state.equals("failed")&&order.getPaymentBy().equals("Lazuni"))
+        if(state.equals("cancle")&&order.getPaymentBy().equals("Lazuni"))
             balanceFluctuationService.createBalanceFluctuation(order.getBuyer().getUserId(),"+",order.getTotal(),"Hoàn tiền giao dịch bị hủy-"+orderid);
 
         //check success order
-        if(state.equals("done")&&order.getPaymentBy().equals("Lazuni")){
-            balanceFluctuationService.createBalanceFluctuation(order.getSeller().getUserId(),"+",order.getTotal(),"Thanh toán đơn hàng thành công-"+orderid);
-        }
+
         return orderRepository.save(order);
     }
+
+    //confirm order for 2 user
+    public Order confirmOrder(String orderid, String userid) {
+        Order order = getOrderById(orderid);
+
+        // If confirm is null and seller is the one confirming
+        if (order.getConfirm() == null && order.getSeller().getUserId().equals(userid)) {
+            order.setConfirm(order.getSeller().getUserId());
+        }
+        // If confirm is not null and buyer is the one confirming
+        else if (order.getConfirm() != null && order.getBuyer().getUserId().equals(userid)) {
+            // Append the new userId to the existing confirm string
+            String confirm = order.getConfirm();
+            order.setConfirm(confirm + "," + order.getBuyer().getUserId());
+            updateOrder(orderid, "successful");
+
+            if (order.getPaymentBy().equals("Lazuni")) {
+                balanceFluctuationService.createBalanceFluctuation(order.getSeller().getUserId(), "+", order.getTotal(), "Thanh toán đơn hàng thành công-" + orderid);
+                updateOrder(orderid, "successful");
+            }
+        } else {
+            // If neither condition matches, throw an exception
+            throw new RuntimeException("Invalid action: Only the seller or buyer can confirm the order.");
+        }
+
+        // Save the updated order
+        return orderRepository.save(order);
+    }
+
+
     public void deleteOrder(String orderid){
         orderRepository.deleteById(orderid);
     }
+
     public List<OrderResponse> formatListOrder(List<Order> orders){
         return  orders.stream().map(order -> {
             OrderResponse response = new OrderResponse();
@@ -129,6 +156,7 @@ public class OrderService {
             response.setTotal(order.getTotal());
             response.setCreateAt(order.getCreateAt());
             response.setTotal(order.getTotal());
+            response.setConfirm(order.getConfirm());
             return response;
         }).collect(Collectors.toList());
     }
@@ -156,6 +184,7 @@ public class OrderService {
             response.setTotal(order.getTotal());
             response.setCreateAt(order.getCreateAt());
             response.setTotal(order.getTotal());
+            response.setConfirm(order.getConfirm());
             return response;
 
     }

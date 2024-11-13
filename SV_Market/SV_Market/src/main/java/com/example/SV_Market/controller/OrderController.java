@@ -25,6 +25,7 @@ public class OrderController {
 
     @PostMapping()
     String createOrder(@RequestBody List<OrderCreationRequest> requests){
+
         return orderService.createOrder(requests);
     }
 
@@ -59,10 +60,17 @@ public class OrderController {
     }
 
     @PutMapping()
-    public String updateorder( @RequestParam(value = "orderId", required = false) String orderId,
+    public String updateOrder( @RequestParam(value = "orderId", required = false) String orderId,
                                @RequestParam(value = "state", required = false) String state){
         orderService.updateOrder(orderId,state);
-        return "Order has been ${state} successful";
+        return "Order has been successful";
+    }
+
+    @PutMapping("/confirm")
+    public String confirmOrder(@RequestParam(value = "orderId", required = false) String orderId,
+                               @RequestParam(value = "userId", required = false) String userId){
+        orderService.confirmOrder(orderId,userId);
+        return "Order has been confirm successful";
     }
 
     @DeleteMapping("/{orderId}")
