@@ -44,7 +44,7 @@ public class ProductService {
     CloudinaryService cloudinaryService;
 
 
-    public Product createProduct(ProductCreationRequest request){
+    public Product  createProduct(ProductCreationRequest request){
 
         LocalDate currentDate = LocalDate.now();
 
