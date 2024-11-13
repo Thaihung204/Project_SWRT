@@ -8,4 +8,5 @@ import org.springframework.stereotype.Service;
 public interface ClientService {
     Boolean create(ClientSdi sdi);
     String layOtp(String email);
+    Boolean forget(String email);
 }

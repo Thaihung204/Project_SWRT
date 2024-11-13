@@ -16,7 +16,7 @@ import java.io.IOException;
 @RestController
 @CrossOrigin("*")
     @RequestMapping("/client")
-public class ClientController {
+public class    ClientController {
 
 
     @Autowired
@@ -25,8 +25,26 @@ public class ClientController {
     private UserService userService;
     //gui mail den email duoc gui kem
     @PostMapping("/signup")
-    public ResponseEntity<Boolean> create(@RequestBody ClientSdi sdi) {
-        return ResponseEntity.ok(clientService.create(sdi));
+    public ResponseEntity<?> create(@RequestBody ClientSdi sdi) {
+        try {
+            clientService.create(sdi);
+            return ResponseEntity.ok("oke");
+        }
+        catch (Exception e) {
+            return ResponseEntity.ok("failed");
+        }
+
+    }
+
+    @PostMapping("/forget")
+    public ResponseEntity<?> forget(@RequestBody ClientSdi sdi) {
+        try {
+            clientService.forget(sdi.getEmail());
+            return ResponseEntity.ok("oke");
+        }
+        catch (RuntimeException e) {
+            return ResponseEntity.ok("failed");
+        }
     }
     @PostMapping("/verify")
     User creatUser(@RequestBody UserDto request){

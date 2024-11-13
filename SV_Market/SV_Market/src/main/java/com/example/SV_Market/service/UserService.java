@@ -101,12 +101,17 @@ public User getUserById(String userId) {
             throw new IllegalArgumentException("The given email must not be null");
         }
 
+
         User user;
 
         try {
             user = getUser(email);
+            if(currentPassword.equals("forget")){
+                user.setPassword(newPassword);  // Update the password
+                userRepository.save(user);  // Save the updated user
+                return "Change password successful";
+            }
             if (user.getPassword().equals(currentPassword)) {
-                System.out.println("1");
                 user.setPassword(newPassword);  // Update the password
                 userRepository.save(user);  // Save the updated user
                 return "Change password successful";

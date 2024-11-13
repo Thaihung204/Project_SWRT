@@ -15,15 +15,15 @@ public interface BalanceFluctuationRepository extends JpaRepository<BalanceFluct
     List<BalanceFluctuation> findByUserId(String userId);
 
     // Đếm số giao dịch hoàn thành trong một tháng
-    @Query("SELECT COUNT(b) FROM BalanceFluctuation b WHERE b.state = 'Giao dịch thành công' AND MONTH(b.date) = :month AND YEAR(b.date) = :year")
+    @Query("SELECT COUNT(b) FROM BalanceFluctuation b WHERE b.state = 'Thành công' AND MONTH(b.date) = :month AND YEAR(b.date) = :year")
     Integer countCompletedTransactionsByMonth(@Param("month") int month, @Param("year") int year);
 
     // Tính tổng số tiền giao dịch trong một tháng
-    @Query("SELECT SUM(b.amount) FROM BalanceFluctuation b WHERE b.state = 'Giao dịch thành công' AND MONTH(b.date) = :month AND YEAR(b.date) = :year")
+    @Query("SELECT SUM(b.amount) FROM BalanceFluctuation b WHERE b.state = 'Thành công' AND MONTH(b.date) = :month AND YEAR(b.date) = :year")
     Double sumTransactionAmountByMonth(@Param("month") int month, @Param("year") int year);
     @Query("SELECT SUM(b.amount) FROM BalanceFluctuation b " +
             "WHERE b.content LIKE %:upgradeKeyword% " +
-            "AND b.state = 'Giao dịch thành công' " +
+            "AND b.state = 'Thành công' " +
             "AND MONTH(b.date) = :month AND YEAR(b.date) = :year")
     Double sumAmountByUpgradeAndDate(@Param("upgradeKeyword") String upgradeKeyword,
                                      @Param("month") int month,

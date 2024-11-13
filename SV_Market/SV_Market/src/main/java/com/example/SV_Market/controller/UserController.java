@@ -78,14 +78,6 @@ public class UserController {
     }
 
 
-    @MessageMapping("/chatuser.addUser")
-    @SendTo("/user/public")
-    public User addUser(
-            @Payload User user
-    ) {
-        userService.saveUser(user);
-        return user;
-    }
 
 
 
