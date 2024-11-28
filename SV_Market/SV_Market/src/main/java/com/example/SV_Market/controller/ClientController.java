@@ -25,8 +25,14 @@ public class ClientController {
     private UserService userService;
     //gui mail den email duoc gui kem
     @PostMapping("/signup")
-    public ResponseEntity<Boolean> create(@RequestBody ClientSdi sdi) {
-        return ResponseEntity.ok(clientService.create(sdi));
+    public ResponseEntity<?> create(@RequestBody ClientSdi sdi) {
+        try {
+            return ResponseEntity.ok(clientService.create(sdi));
+        }
+        catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.OK).body(e.getMessage());
+        }
+
     }
     @PostMapping("/verify")
     User creatUser(@RequestBody UserDto request){
